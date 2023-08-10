@@ -1,0 +1,110 @@
+package Model;
+/**
+ * Classe che descrive il comportamento di un
+ * player generico (Utente o CPU)
+ */
+public class Player {
+
+    private int id;
+
+    /**
+     * Un giocatore ha sempre una mano, anche se potenzialmente vuota
+     */
+    public Hand hand;
+    /**
+     * Costruisce un player con una mano "base" di 10 carte
+     */
+    public Player() {
+        hand = new Hand();
+    }
+
+    /**
+     * Costruisce un player definendo la dimensione massima della mano,
+     * da utilizzare nei turni successivi al primo (di ogni game)
+     * @param maxHandSize dimensione massima della mano
+     */
+    public Player(int id, int maxHandSize) {
+        this.id = id;
+        hand = new Hand(maxHandSize);
+    }
+
+
+    /**
+     * Metodo che effettua le giocate "obbligate" per il turno,
+     * Partendo da una carta pescata dal mazzo (qualsiasi)
+     * oppure dalla pila degli scarti (in questo caso la carta è sicuramente nel range 1-10/jolly)
+     * @param card la carta descritta sopra
+     * @return la carta che viene scartata alla fine del turno o dopo un Trash!
+     */
+    public Card playTurn(Card card) {
+        System.out.println("Drawn card: "+ card);
+        int cardValue = card.getValue();
+        // se la mano è tutta visibile la carta viene automaticamente scartata
+        // (da aggiungere ai casi base per evitare ricorsioni infinite)
+
+        if (hand.handFullyVisible()) {
+            System.out.println("Scarto "+card);
+            return card;
+        }
+        // Se ho pescato un Jolly o un K devo attivare una "scelta" del player o della CPU
+        if (cardValue == 0 || cardValue == 13){
+            // Per ora implemento una scelta della CPU molto semplice, inserisce il jolly alla prima posizione utile,
+            // per quanto riguarda il player umano poi vediamo
+            int i = 0;
+            while (i++ < hand.getHandSize()){
+                if (hand.cardIsHide(i))
+                    break;
+            }
+            System.out.println("Primo slot utile per Jolly "+ i );
+            Card newCardToCheck = hand.swapCardInPosition(i, card);
+            return playTurn(newCardToCheck);
+        }
+        // Se è stato pescato un J o Q devo scartarlo in quanto non giocabili
+        // per i round successivi controllo se il valore della carta è maggiore della lunghezza della mano
+        // es. Se nel secondo round ho 9 carte in mano, il 10 diventa non giocabile, etc...
+        /*
+        if (Utils.isUnplayable(cardValue, hand.getHandSize())) {
+
+            System.out.println("Carta Unplayable, scarto");
+            observer.discardCard(card);
+            return card;
+        }
+         */
+
+        // se arrivo qui la carta ha un valore tra 1 e 10, la devo quindi inserire al suo posto (se è libero)
+        // oppure la scambio con un Jolly/K in caso abbia precedentemente inserito queste carte per fillare lo spazio
+        if (hand.cardIsHide(cardValue) || (hand.getCard(cardValue-1).getValue() == 0 || hand.getCard(cardValue-1).getValue() == 13)){
+            // se la carta è Hide significa che la posso scambiare
+            Card newCardToCheck = hand.swapCardInPosition(cardValue, card);
+            System.out.println("Scambio carta, nuova iterazione con: "+newCardToCheck);
+            //observer.cardDrawn(this.id, card);
+            return playTurn(newCardToCheck);
+        }
+
+        System.out.println("Scarto "+card);
+        //observer.discardCard(card);
+        return card;
+    }
+
+    /**
+     * Overload del metodo toString utilizzato per debug e visualizzazione su terminale
+     * @return una stringa che descrive la mano del giocatore (valori e semi)
+     */
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < hand.getHandSize(); i++){
+            s.append(hand.getCard(i).toString());
+
+            if (i <  hand.getHandSize() - 1)
+                s.append('\n');
+        }
+        return s.toString();
+    }
+
+    /*
+    public void addObserver(PlayerObserver observer, int id){
+        this.observer = observer;
+    }
+    public void removeObserver() {this.observer = null;}
+     */
+}
