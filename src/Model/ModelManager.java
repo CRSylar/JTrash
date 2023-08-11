@@ -89,7 +89,7 @@ public class ModelManager extends Observable {
         return false;
     }
 
-    public Card draw(Card c) {
+    public Card notifyDraw(Card c) {
         setChanged();
         notifyObservers(new Notification(
                 Notification.TYPES.DRAW,
@@ -105,8 +105,8 @@ public class ModelManager extends Observable {
     public DiscardPile getDiscardPile() {return this.discardPile;}
     public Player[] getPlayers() {return this.players;}
     public int getCardDrawnFromBottomOfThePile() {return cardDrawnFromBottomOfThePile;}
-    public void drawFromBottom() {
-        cardDrawnFromBottomOfThePile++;
+    public Card drawFromBottom() {
+        return discardPile.drawFromIndex(cardDrawnFromBottomOfThePile++);
     }
     public void resetDrawnFromBottom() {
         cardDrawnFromBottomOfThePile = 0;

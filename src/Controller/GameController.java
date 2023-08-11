@@ -140,11 +140,8 @@ public class GameController {
         // quindi per semplicità pesco da sotto
         if (model.getDeck().cardLeft() == 0){
             System.out.println("Drawing from the bottom of the discard");
-            model.getPlayers()[0].playTurn(
-                    model.getDiscardPile().drawFromIndex(
-                            model.getCardDrawnFromBottomOfThePile()
-                    ));
-            model.drawFromBottom();
+            subsequentDraws(model.drawFromBottom());
+
         }
         else {
             System.out.println("Drawing from the deck");
@@ -158,13 +155,13 @@ public class GameController {
         if (model.getDiscardPile().size() == 0)
             throw new IllegalStateException("Discard pile is empty");
         System.out.println("Drawing from the discard");
-        // inviare notifica alla view
-        model.getPlayers()[0].playTurn(model.getDiscardPile().drawFromPile());
+        view.getDiscardPanel().removeTop();
+        subsequentDraws(model.getDiscardPile().drawFromPile());
         latch.countDown();
     }
 
     private void subsequentDraws(Card card) {
-        Card c = model.draw(card);
+        Card c = model.notifyDraw(card);
         new Timer(1200, e -> {
             view.getDrawnCardPanel().setVisible(false);
             view.getDrawnCardPanel().removeAll();

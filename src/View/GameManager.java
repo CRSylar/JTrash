@@ -62,7 +62,7 @@ public class GameManager extends JFrame implements Observer {
         drawnCardPanel.setBounds(350, 250,144,192);
         drawnCardPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         drawnCardPanel.setVisible(false);
-        tablePanel.add(drawnCardPanel, 5);
+        tablePanel.add(drawnCardPanel, valueOf(5));
 
         add(tablePanel, BorderLayout.CENTER);
     }
@@ -77,11 +77,11 @@ public class GameManager extends JFrame implements Observer {
 
     private void InitializeDeckNDiscard() {
         discardPanel.setToolTipText("Click to draw the Top Card");
-        discardPanel.setBounds(557, 293, 78, 114);
+        discardPanel.setBounds(557, 285, 78, 114);
         tablePanel.add(discardPanel, valueOf(1));
 
         deckPanel.setToolTipText("Click to draw a Card");
-        deckPanel.setBounds(645, 293, 78, 114);
+        deckPanel.setBounds(645, 285, 78, 114);
         tablePanel.add(deckPanel, valueOf(1));
     }
 
@@ -99,21 +99,21 @@ public class GameManager extends JFrame implements Observer {
     }
 
     private void InitializeSouthPlayer() {
-        playerPanels[0].setBounds(440,453,400,235);
+        playerPanels[0].setBounds(420,430,440,250);
         this.tablePanel.add(playerPanels[0], valueOf(0));
     }
     private void InitializeNorthPlayer() {
-        playerPanels[1].setBounds(440,5,400,235);
+        playerPanels[1].setBounds(420,10,440,250);
         this.tablePanel.add(playerPanels[1], valueOf(0));
     }
 
     private void InitializeWestPlayer() {
-        playerPanels[2].setBounds(25,150,235,400);
+        playerPanels[2].setBounds(25,150,250,440);
         this.tablePanel.add(playerPanels[2], valueOf(0));
     }
 
     private void InitializeEastPlayer() {
-        playerPanels[3].setBounds(1020,150,235,400);
+        playerPanels[3].setBounds(1000,150,250,440);
         this.tablePanel.add(playerPanels[3],  valueOf(0));
     }
 
