@@ -1,7 +1,9 @@
 package View;
 
+import Model.Hand;
 import Model.Notification;
 import Model.Player;
+import Utilities.Pair;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,24 +117,65 @@ public class GameManager extends JFrame implements Observer {
         this.tablePanel.add(playerPanels[3],  valueOf(0));
     }
 
-
-    @Override
-    public void update(Observable o, Object arg) {
-        Notification n = (Notification) arg;
-
-        if (n.getType() == Notification.TYPES.FILLHAND) {
-            int id = ((Player)n.getObj()).getId();
-            playerPanels[id].setVisible(false);
-            playerPanels[id].add(new Card(id > 1));
-            playerPanels[id].setVisible(true);
-        }
-    }
-
     public DeckPanel getDeckPanel() {
         return deckPanel;
     }
 
     public DiscardPanel getDiscardPanel() {
         return discardPanel;
+    }
+
+    public JPanel getDrawnCardPanel() {
+        return drawnCardPanel;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        Notification n = (Notification) arg;
+
+        switch (n.getType()) {
+            case FILLHAND -> {
+                int id = ((Player)n.getObj()).getId();
+                playerPanels[id].setVisible(false);
+                playerPanels[id].add(new Card(id > 1));
+                playerPanels[id].setVisible(true);
+            }
+            case DRAW -> {
+                Model.Card c = ((Model.Card) n.getObj());
+                Image img = new ImageIcon(AssetLoader.getInstance().getCard(c.getValue(), c.getSuit()))
+                        .getImage().getScaledInstance(144,192, Image.SCALE_SMOOTH);
+                drawnCardPanel.add(
+                        new JLabel(
+                                new ImageIcon(img)
+                        )
+                );
+                drawnCardPanel.setVisible(true);
+            }
+            case HAND -> {
+                Pair<Integer, Hand> p = ((Pair<Integer, Model.Hand>)n.getObj());
+                int playerId = p.getLeft();
+                Model.Hand h = p.getRight();
+                playerPanels[playerId].setVisible(false);
+                playerPanels[playerId].removeAll();
+                for (int i=0; i< h.getHandSize(); i++) {
+                    if (h.getCard(i).isHide())
+                        playerPanels[playerId].add(new Card(playerId > 1));
+                    else
+                        playerPanels[playerId].add(new Card(h.getCard(i).getValue(),h.getCard(i).getSuit()));
+                }
+                playerPanels[playerId].setVisible(true);
+
+            }
+            case DISCARD -> {
+                Model.Card c = ((Model.Card)n.getObj());
+                Image img = new ImageIcon(AssetLoader.getInstance().getCard(c.getValue(), c.getSuit()))
+                        .getImage();
+                discardPanel.add(
+                        new JLabel(
+                                new ImageIcon(img)
+                        )
+                );
+            }
+        }
     }
 }

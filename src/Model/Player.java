@@ -1,11 +1,15 @@
 package Model;
+
+import Utilities.Pair;
+import Utilities.Utils;
+
 /**
  * Classe che descrive il comportamento di un
  * player generico (Utente o CPU)
  */
 public class Player {
 
-    private int id;
+    private final int id;
 
     /**
      * Un giocatore ha sempre una mano, anche se potenzialmente vuota
@@ -37,7 +41,7 @@ public class Player {
      * @param card la carta descritta sopra
      * @return la carta che viene scartata alla fine del turno o dopo un Trash!
      */
-    public Card playTurn(Card card) {
+    public Card _playTurn(Card card) {
         System.out.println("Drawn card: "+ card);
         int cardValue = card.getValue();
         // se la mano è tutta visibile la carta viene automaticamente scartata
@@ -58,7 +62,7 @@ public class Player {
             }
             System.out.println("Primo slot utile per Jolly "+ i );
             Card newCardToCheck = hand.swapCardInPosition(i, card);
-            return playTurn(newCardToCheck);
+            return _playTurn(newCardToCheck);
         }
         // Se è stato pescato un J o Q devo scartarlo in quanto non giocabili
         // per i round successivi controllo se il valore della carta è maggiore della lunghezza della mano
@@ -79,12 +83,47 @@ public class Player {
             Card newCardToCheck = hand.swapCardInPosition(cardValue, card);
             System.out.println("Scambio carta, nuova iterazione con: "+newCardToCheck);
             //observer.cardDrawn(this.id, card);
-            return playTurn(newCardToCheck);
+            return _playTurn(newCardToCheck);
         }
 
         System.out.println("Scarto "+card);
         //observer.discardCard(card);
         return card;
+    }
+
+    public Pair<Card, Boolean> playTurn(Card card) {
+        System.out.println("Drawn card: "+ card);
+        int cardValue = card.getValue();
+        // se la mano è tutta visibile la carta viene automaticamente scartata
+        if (hand.handFullyVisible())
+            return new Pair<Card, Boolean>(card, true);
+        // Se ho pescato un Jolly o un K devo attivare una "scelta" del player o della CPU
+        if (cardValue == 0 || cardValue == 13) {
+            // Per ora implemento una scelta della CPU molto semplice, inserisce il jolly alla prima posizione utile,
+            // per quanto riguarda il player umano poi vediamo
+            int i = 0;
+            while (i++ < hand.getHandSize()) {
+                if (hand.cardIsHide(i))
+                    break;
+            }
+            return new Pair<>(hand.swapCardInPosition(i, card), false);
+        }
+        // Se è stato pescato un J o Q devo scartarlo in quanto non giocabili
+        // per i round successivi controllo se il valore della carta è maggiore della lunghezza della mano
+        // es. Se nel secondo round ho 9 carte in mano, il 10 diventa non giocabile, etc...
+        if (Utils.isUnplayable(cardValue, hand.getHandSize()))
+            return new Pair<>(card, true);
+
+        // se arrivo qui la carta ha un valore tra 1 e 10, la devo quindi inserire al suo posto (se è libero)
+        // oppure la scambio con un Jolly/K in caso abbia precedentemente inserito queste carte per fillare lo spazio
+        if (hand.cardIsHide(cardValue) || isJolly(cardValue)) {
+            // se la carta è Hide significa che la posso scambiare
+            return new Pair<>(
+                    hand.swapCardInPosition(cardValue, card),
+                    false
+            );
+        }
+        return new Pair<>(card, true);
     }
 
     /**
@@ -100,6 +139,14 @@ public class Player {
                 s.append('\n');
         }
         return s.toString();
+    }
+
+    private boolean isJolly(int cardValue) {
+        return (
+                hand.getCard(cardValue - 1).getValue() == 0
+                        ||
+                hand.getCard(cardValue - 1).getValue() == 13
+                );
     }
 
     public int getId() {return id;}

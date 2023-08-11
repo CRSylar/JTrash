@@ -1,14 +1,13 @@
 package Controller;
 
+import Model.Card;
 import Model.ModelManager;
-import Model.Pair;
+import Utilities.Pair;
 import Model.Player;
 import View.GameManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -90,6 +89,7 @@ public class GameController {
                     BorderFactory.createLineBorder(Color.GREEN)
             );
 
+            //System.out.println("turno di "+ (playerTurn % numberOfPlayers));
             if (playerTurn % numberOfPlayers == 0) {
                 MyMouseListener ms = new MyMouseListener(this);
                 executePlayerTurn(ms);
@@ -111,6 +111,7 @@ public class GameController {
             playerTurn++;
             if (playerTrashed == (playerTurn % numberOfPlayers))
                 turnStatus = false;
+            latch = new CountDownLatch(1);
         }
     }
 
@@ -121,16 +122,14 @@ public class GameController {
     }
 
     private void fillPlayerHand(Player player) {
-        new Timer(550, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (player.hand.canHoldMoreCard()) {
-                    model.fillPlayerHand(player);
-                } else {
-                    Timer self = (Timer) e.getSource();
-                    self.stop();
-                    System.out.println("Model: Timer Stopped");
-                }
+
+        new Timer(550, e -> {
+            if (player.hand.canHoldMoreCard()) {
+                model.fillPlayerHand(player);
+            } else {
+                Timer self = (Timer) e.getSource();
+                self.stop();
+                System.out.println("Model: Timer Stopped");
             }
         }).start();
     }
@@ -149,11 +148,12 @@ public class GameController {
         }
         else {
             System.out.println("Drawing from the deck");
-            model.getPlayers()[0].playTurn(model.getDeck().drawCard());
+            // Draw from deck si occupa di notificare la view
+            subsequentDraws(model.getDeck().drawCard());
         }
-        // inviare notifica alla view
         latch.countDown();
     }
+
     public void drawFromDiscard() {
         if (model.getDiscardPile().size() == 0)
             throw new IllegalStateException("Discard pile is empty");
@@ -161,5 +161,20 @@ public class GameController {
         // inviare notifica alla view
         model.getPlayers()[0].playTurn(model.getDiscardPile().drawFromPile());
         latch.countDown();
+    }
+
+    private void subsequentDraws(Card card) {
+        Card c = model.draw(card);
+        new Timer(1200, e -> {
+            view.getDrawnCardPanel().setVisible(false);
+            view.getDrawnCardPanel().removeAll();
+            Pair<Card, Boolean> status = model.humanTurn(c);
+            ((Timer)e.getSource()).stop();
+            if (status.getRight())
+                model.discard(status.getLeft());
+            else
+                subsequentDraws(status.getLeft());
+
+        }).start();
     }
 }

@@ -1,5 +1,7 @@
 package Model;
 
+import Utilities.Pair;
+
 import java.util.Observable;
 
 
@@ -87,6 +89,15 @@ public class ModelManager extends Observable {
         return false;
     }
 
+    public Card draw(Card c) {
+        setChanged();
+        notifyObservers(new Notification(
+                Notification.TYPES.DRAW,
+                c
+        ));
+        return c;
+    }
+
     public int[] getPlayersThatGetOneCardLessNextRound() {return this.playersThatGetOneCardLessNextRound;}
     public int getNumberOfPlayers() {return this.numberOfPlayers;}
     public int getWinner() {return this.winner;}
@@ -112,5 +123,26 @@ public class ModelManager extends Observable {
         }
 
         return new Pair<>(playerId, i);
+    }
+
+    public Pair<Card, Boolean> humanTurn(Card card) {
+        Pair<Card, Boolean> status = players[0].playTurn(card);
+        setChanged();
+        notifyObservers(new Notification(
+                Notification.TYPES.HAND,
+                new Pair<Integer, Hand>(0,players[0].hand)
+        ));
+        return status;
+    }
+
+    public void discard(Card card) {
+        discardPile.addCard(card);
+        setChanged();
+        notifyObservers(
+                new Notification(
+                        Notification.TYPES.DISCARD,
+                        card
+                )
+        );
     }
 }

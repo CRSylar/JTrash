@@ -13,6 +13,9 @@ public class Notification {
     public Object getObj() {return o;}
 
     public enum TYPES {
-        FILLHAND
+        FILLHAND,
+        DRAW,
+        HAND,
+        DISCARD
     }
 }
