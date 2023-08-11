@@ -1,8 +1,5 @@
 package Model;
 
-import javax.swing.Timer;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Observable;
 
 
@@ -38,11 +35,11 @@ public class ModelManager extends Observable {
     /**
      * Numero di giocatori per la partita in corso
      */
-    int numberOfPlayers;
+    private final int numberOfPlayers;
     /**
      * Array di player, contiene le istanze dei giocatori (CPU e Umani)
      */
-    Player[] players;
+    private Player[] players;
 
     public ModelManager(int players) {
         if (players > 2) {
@@ -52,75 +49,24 @@ public class ModelManager extends Observable {
         }
         this.numberOfPlayers = players;
         this.players = new Player[players];
-        this.playersThatGetOneCardLessNextRound = new int[players];
+    }
+
+    public void resetPlayersThatGetOneCardLessNextRound() {
+        this.playersThatGetOneCardLessNextRound = new int[numberOfPlayers];
     }
 
     /**
      * Metodo di comodo
-     * riempie la mano di un giocatore
-     * @param index - Indice nell' array dei giocatori che rappresenta il giocatore la cui mano riempire
+     * aggiunge una carta in mano al giocatore e notifica l'osservatore
+     * @param player TODO - Indice nell' array dei giocatori che rappresenta il giocatore la cui mano riempire
      */
-    public void fillPlayerHand(int index) {
-        /*
-        while (players[0].hand.canHoldMoreCard()) {
-            players[0].hand.addCard(deck.drawCard());
-            setChanged();
-            notifyObservers("nuovaCarta aggiunta alla mano di "+index);
-        }
-         */
-        new Timer(550, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (players[index].hand.canHoldMoreCard()) {
-                    players[index].hand.addCard(deck.drawCard());
-                    setChanged();
-                    notifyObservers(index); // TODO standardizzare la notifica con OBJ
-                } else {
-                    Timer self = (Timer) e.getSource();
-                    self.stop();
-                    System.out.println("Model: Timer Stopped");
-                }
-            }
-        }).start();
-    }
-
-    /**
-     * GameLoop, assegna la mano (e relativa dimensione massima) ai giocatori
-     * basandosi sui valori nell'array playersThatGetOneCardLessNextRound,
-     * che conterrà il valore 1 nella posizione relativa al giocatore che ha fatto
-     * Trash il turno precedente.
-     * Dopo di che avvia un turno
-     */
-    public void startGame() {
-        Thread gameThread = new Thread( () -> {
-            while (!theresAWinner()) {
-                deck.shuffle();
-                // fill the players hands
-                for (int i=0; i < numberOfPlayers; i++) {
-                    if (players[i] == null)
-                        players[i] = new Player();
-                    else if (playersThatGetOneCardLessNextRound[i] == 1)
-                        players[i] = new Player(i, players[i].hand.getHandSize() - 1);
-                    else
-                        players[i] = new Player(i, players[i].hand.getHandSize());
-                    fillPlayerHand(i);
-                }
-                playTurn();
-            }
-        });
-       gameThread.start();
-       System.out.println("Game won by Player "+ (winner) );
-    }
-
-    /**
-     * Loop del singolo turno, viene "estratto" il player che inizia per primo.
-     * Ogni giocatore (tranne il primo) puo pescare dal mazzo o dagli scarti.
-     * Quando un giocatore fa Trash viene effettuato un "ultimo giro" fino a tornare
-     * al giocatore in questione, gli eventuali Trash degli altri giocatori vengono
-     * registrati nell'array playersThatGetOneCardLessNextRound
-     */
-    private void playTurn() {
-        discardPile.clearPile();
+    public void fillPlayerHand(Player player) {
+        player.hand.addCard(deck.drawCard());
+        setChanged();
+        notifyObservers(new Notification(
+                Notification.TYPES.FILLHAND,
+                player
+        ));
     }
 
     /**
@@ -129,7 +75,7 @@ public class ModelManager extends Observable {
      * carte
      * @return un booleano.
      */
-    private boolean theresAWinner() {
+    public boolean theresAWinner() {
         int i = 0;
         for (Player player : players){
             if (player != null && player.hand.getHandSize() == 0) {
@@ -139,5 +85,32 @@ public class ModelManager extends Observable {
             i++;
         }
         return false;
+    }
+
+    public int[] getPlayersThatGetOneCardLessNextRound() {return this.playersThatGetOneCardLessNextRound;}
+    public int getNumberOfPlayers() {return this.numberOfPlayers;}
+    public int getWinner() {return this.winner;}
+    public Deck getDeck() { return this.deck;}
+    public DiscardPile getDiscardPile() {return this.discardPile;}
+    public Player[] getPlayers() {return this.players;}
+    public int getCardDrawnFromBottomOfThePile() {return cardDrawnFromBottomOfThePile;}
+    public void drawFromBottom() {
+        cardDrawnFromBottomOfThePile++;
+    }
+    public void resetDrawnFromBottom() {
+        cardDrawnFromBottomOfThePile = 0;
+    }
+
+    public Pair<Integer, Integer> getMaxHandSize() {
+        int i = 0;
+        int playerId = -1;
+        for (Player player: players){
+            if (i < player.hand.getMaxSize()) {
+                i = player.hand.getMaxSize();
+                playerId = player.getId();
+            }
+        }
+
+        return new Pair<>(playerId, i);
     }
 }

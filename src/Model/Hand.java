@@ -70,6 +70,7 @@ public class Hand {
      */
     public int getHandSize() { return hand.size();}
 
+    public int getMaxSize() {return maxSize;}
     /**
      * Metodo per accesso rapido a informazione sullo stato della
      * mano del giocatore, risponde alla domanda, puo accettare nuove carte ?

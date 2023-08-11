@@ -1,5 +1,8 @@
 package View;
 
+import Model.Notification;
+import Model.Player;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observable;
@@ -15,7 +18,7 @@ public class GameManager extends JFrame implements Observer {
     private final DiscardPanel discardPanel;
 
     private final JPanel drawnCardPanel;
-    public JPanel[] playerPanels;
+    private final JPanel[] playerPanels;
 
     public GameManager(int numberOfPlayers) {
         setTitle("JTrash");
@@ -62,7 +65,7 @@ public class GameManager extends JFrame implements Observer {
         add(tablePanel, BorderLayout.CENTER);
     }
 
-
+    public JPanel getPlayerPanel(int idx) {return this.playerPanels[idx];}
     private void InitializeTable() {
         // Table Panel initialization
         tablePanel.setBounds(0,0,1280,700);
@@ -87,13 +90,8 @@ public class GameManager extends JFrame implements Observer {
         else
             playerPanel  = new JPanel(new GridLayout(2, 5));
 
-        /*
-        for (int j=0; j < 10; j++)
-            playerPanel.add(new Card(direction >= 1));
-         */
         playerPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         playerPanel.setBackground(new Color(0,102,0));
-        //playerPanel.setVisible(true);
 
         return playerPanel;
     }
@@ -116,12 +114,25 @@ public class GameManager extends JFrame implements Observer {
         playerPanels[3].setBounds(1020,150,235,400);
         this.tablePanel.add(playerPanels[3],  valueOf(0));
     }
+
+
     @Override
     public void update(Observable o, Object arg) {
-        //System.out.println("View: Adding new Card");
-        playerPanels[(Integer)arg].setVisible(false);
-        playerPanels[(Integer)arg].add(new Card((Integer)arg > 1));
-        playerPanels[(Integer)arg].setVisible(true);
+        Notification n = (Notification) arg;
 
+        if (n.getType() == Notification.TYPES.FILLHAND) {
+            int id = ((Player)n.getObj()).getId();
+            playerPanels[id].setVisible(false);
+            playerPanels[id].add(new Card(id > 1));
+            playerPanels[id].setVisible(true);
+        }
+    }
+
+    public DeckPanel getDeckPanel() {
+        return deckPanel;
+    }
+
+    public DiscardPanel getDiscardPanel() {
+        return discardPanel;
     }
 }

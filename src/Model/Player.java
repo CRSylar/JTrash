@@ -14,7 +14,8 @@ public class Player {
     /**
      * Costruisce un player con una mano "base" di 10 carte
      */
-    public Player() {
+    public Player(int id) {
+        this.id = id;
         hand = new Hand();
     }
 
@@ -101,10 +102,5 @@ public class Player {
         return s.toString();
     }
 
-    /*
-    public void addObserver(PlayerObserver observer, int id){
-        this.observer = observer;
-    }
-    public void removeObserver() {this.observer = null;}
-     */
+    public int getId() {return id;}
 }
