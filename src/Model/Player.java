@@ -41,58 +41,8 @@ public class Player {
      * @param card la carta descritta sopra
      * @return la carta che viene scartata alla fine del turno o dopo un Trash!
      */
-    public Card _playTurn(Card card) {
-        System.out.println("Drawn card: "+ card);
-        int cardValue = card.getValue();
-        // se la mano è tutta visibile la carta viene automaticamente scartata
-        // (da aggiungere ai casi base per evitare ricorsioni infinite)
-
-        if (hand.handFullyVisible()) {
-            System.out.println("Scarto "+card);
-            return card;
-        }
-        // Se ho pescato un Jolly o un K devo attivare una "scelta" del player o della CPU
-        if (cardValue == 0 || cardValue == 13){
-            // Per ora implemento una scelta della CPU molto semplice, inserisce il jolly alla prima posizione utile,
-            // per quanto riguarda il player umano poi vediamo
-            int i = 0;
-            while (i++ < hand.getHandSize()){
-                if (hand.cardIsHide(i))
-                    break;
-            }
-            System.out.println("Primo slot utile per Jolly "+ i );
-            Card newCardToCheck = hand.swapCardInPosition(i, card);
-            return _playTurn(newCardToCheck);
-        }
-        // Se è stato pescato un J o Q devo scartarlo in quanto non giocabili
-        // per i round successivi controllo se il valore della carta è maggiore della lunghezza della mano
-        // es. Se nel secondo round ho 9 carte in mano, il 10 diventa non giocabile, etc...
-        /*
-        if (Utils.isUnplayable(cardValue, hand.getHandSize())) {
-
-            System.out.println("Carta Unplayable, scarto");
-            observer.discardCard(card);
-            return card;
-        }
-         */
-
-        // se arrivo qui la carta ha un valore tra 1 e 10, la devo quindi inserire al suo posto (se è libero)
-        // oppure la scambio con un Jolly/K in caso abbia precedentemente inserito queste carte per fillare lo spazio
-        if (hand.cardIsHide(cardValue) || (hand.getCard(cardValue-1).getValue() == 0 || hand.getCard(cardValue-1).getValue() == 13)){
-            // se la carta è Hide significa che la posso scambiare
-            Card newCardToCheck = hand.swapCardInPosition(cardValue, card);
-            System.out.println("Scambio carta, nuova iterazione con: "+newCardToCheck);
-            //observer.cardDrawn(this.id, card);
-            return _playTurn(newCardToCheck);
-        }
-
-        System.out.println("Scarto "+card);
-        //observer.discardCard(card);
-        return card;
-    }
-
     public Pair<Card, Boolean> playTurn(Card card) {
-        System.out.println("Drawn card: "+ card);
+        System.out.println("Drawn card: "+ card + " by player "+id);
         int cardValue = card.getValue();
         // se la mano è tutta visibile la carta viene automaticamente scartata
         if (hand.handFullyVisible())

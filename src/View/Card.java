@@ -14,6 +14,7 @@ public class Card extends JPanel {
                     .getRotatedCard(AssetLoader.getInstance().getCardBack())));
         else
             cardUI = new JLabel(new ImageIcon(AssetLoader.getInstance().getCardBack()));
+
         setBackground(new Color(0,102,0));
         add(cardUI);
     }

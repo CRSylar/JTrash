@@ -12,9 +12,14 @@ public class MyMouseListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getSource().getClass().getSimpleName().equals("DeckPanel"))
-            gameController.drawFromDeck();
-        else
-            gameController.drawFromDiscard();
+        if (e.getSource().getClass().getSimpleName().equals("DeckPanel")) {
+            System.out.println("cliccato sul deck");
+            gameController.drawFromDeck(0);
+        }
+        else {
+            System.out.println("cliccato sul pila scarti");
+            gameController.drawFromDiscard(0);
+
+        }
     }
 }

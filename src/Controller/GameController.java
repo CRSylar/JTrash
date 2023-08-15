@@ -4,6 +4,7 @@ import Model.Card;
 import Model.ModelManager;
 import Utilities.Pair;
 import Model.Player;
+import Utilities.Utils;
 import View.GameManager;
 
 import javax.swing.*;
@@ -17,7 +18,13 @@ public class GameController {
     private final ModelManager model;
     private final GameManager view;
 
-    CountDownLatch latch = new CountDownLatch(1);
+    // Latch usato solo per il giocatore "Umano" per disattivare i listener
+    CountDownLatch p0Latch = new CountDownLatch(1);
+    // Latch principale che permette di sincronizzare tutto
+    CountDownLatch mainLatch = new CountDownLatch(1);
+    MyMouseListener ms = new MyMouseListener(this);
+
+
 
     public GameController(int players) {
         // create the ModelManager
@@ -55,14 +62,13 @@ public class GameController {
                         players[i] = new Player(i, players[i].hand.getHandSize());
                     fillPlayerHand(players[i]);
                 }
-                // queste due righe servono a "bloccare" tutto mentre aspetto che la view
-                // finisca di mettere le carte in mano ai giocatori
-                Pair<Integer, Integer> p = model.getMaxHandSize();
-                while (view.getPlayerPanel(p.getLeft()).getComponentCount() < p.getRight());
-                // END
 
                 // svolgimento turno vero e proprio
-                playTurn(model.getNumberOfPlayers());
+                try {
+                    playTurn(model.getNumberOfPlayers());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
         gameThread.start();
@@ -76,7 +82,7 @@ public class GameController {
      * al giocatore in questione, gli eventuali Trash degli altri giocatori vengono
      * registrati nell'array playersThatGetOneCardLessNextRound
      */
-    private void playTurn(int numberOfPlayers) {
+    private void playTurn(int numberOfPlayers) throws InterruptedException {
         model.resetPlayersThatGetOneCardLessNextRound();
         int playerTurn = (new Random().nextInt(100)) % numberOfPlayers;
         boolean turnStatus = true;
@@ -85,34 +91,44 @@ public class GameController {
         // Inizia da -1 cosi da non creare race conditions
         int playerTrashed = -1;
         while (turnStatus) {
+            System.out.println("tocca a giocatore "+(playerTurn % numberOfPlayers));
             view.getPlayerPanel(playerTurn % numberOfPlayers).setBorder(
                     BorderFactory.createLineBorder(Color.GREEN)
             );
-
-            //System.out.println("turno di "+ (playerTurn % numberOfPlayers));
-            if (playerTurn % numberOfPlayers == 0) {
-                MyMouseListener ms = new MyMouseListener(this);
+            // Turno giocatore Umano
+            if (playerTurn == 0) {
                 executePlayerTurn(ms);
-                try {
-                    latch.await();
-                    view.getDeckPanel().removeMouseListener(ms);
-                    view.getDiscardPanel().removeMouseListener(ms);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Thread.currentThread().interrupt();
-                }
+                // appena viene cliccato uno tra deck e scarti rimuovo i listener, per evitare eventi multipli.
+                p0Latch.await();
+                view.getDeckPanel().removeMouseListener(ms);
+                view.getDiscardPanel().removeMouseListener(ms);
+                // resetto il latch
+                p0Latch = new CountDownLatch(1);
             }
-            else {}
-               // cardDrawnFromBottomOfThePile = executeCpuTurn(playerTurn, cardDrawnFromBottomOfThePile);
+            // Turno CPU (p1/2/3)
+            else
+                executeCpuTurn(playerTurn % numberOfPlayers);
 
+
+            mainLatch.await();
             // tolgo il bordo
-            view.getPlayerPanel(playerTurn% numberOfPlayers).setBorder(null);
+            view.getPlayerPanel(playerTurn % numberOfPlayers).setBorder(null);
             // incremento il turno, tocca al giocatore successivo
             playerTurn++;
+            // TODO - Logica che assegna il trash, da prendere da altro proj
             if (playerTrashed == (playerTurn % numberOfPlayers))
                 turnStatus = false;
-            latch = new CountDownLatch(1);
+            mainLatch = new CountDownLatch(1);
         }
+    }
+
+    private void executeCpuTurn(int playerTurn){
+        // Se ci sono scarti faccio il Peek della cima, se è una carta con un valore che a me manca me la prendo
+        // I casi speciali (Jolly e carte Jolly) sono sempre presi
+        if (model.getDiscardPile().size() > 0 && Utils.tryToDrawFromDiscard(model.getDiscardPile().peek(), model.getPlayers()[playerTurn].hand))
+            drawFromDiscard(playerTurn);
+        else
+            drawFromDeck(playerTurn);
     }
 
     private void executePlayerTurn(MouseListener ms) {
@@ -134,44 +150,49 @@ public class GameController {
         }).start();
     }
 
-    public void drawFromDeck() {
+    public void drawFromDeck(int playerTurn) {
         // se le carte nel mazzo sono finite vengono usate
         // quelle nella pila degli scarti, messe al contrario
         // quindi per semplicità pesco da sotto
         if (model.getDeck().cardLeft() == 0){
             System.out.println("Drawing from the bottom of the discard");
-            subsequentDraws(model.drawFromBottom());
-
+            subsequentDraws(playerTurn, model.drawFromBottom());
         }
         else {
-            System.out.println("Drawing from the deck");
+            //System.out.println("Drawing from the deck");
             // Draw from deck si occupa di notificare la view
-            subsequentDraws(model.getDeck().drawCard());
+            subsequentDraws(playerTurn, model.getDeck().drawCard());
         }
-        latch.countDown();
+        if (playerTurn == 0)
+            p0Latch.countDown();
     }
 
-    public void drawFromDiscard() {
+    public void drawFromDiscard(int playerTurn) {
         if (model.getDiscardPile().size() == 0)
             throw new IllegalStateException("Discard pile is empty");
-        System.out.println("Drawing from the discard");
+        //System.out.println("Drawing from the discard");
         view.getDiscardPanel().removeTop();
-        subsequentDraws(model.getDiscardPile().drawFromPile());
-        latch.countDown();
+        subsequentDraws(playerTurn, model.getDiscardPile().drawFromPile());
+        if (playerTurn == 0)
+            p0Latch.countDown();
     }
 
-    private void subsequentDraws(Card card) {
+    private void subsequentDraws(int playerTurn, Card card) {
         Card c = model.notifyDraw(card);
-        new Timer(1200, e -> {
+        Timer t = new Timer(1200, e -> {
             view.getDrawnCardPanel().setVisible(false);
             view.getDrawnCardPanel().removeAll();
-            Pair<Card, Boolean> status = model.humanTurn(c);
+            Pair<Card, Boolean> status = model.computeTurn(playerTurn, c);
             ((Timer)e.getSource()).stop();
-            if (status.getRight())
+            if (status.getRight()) {
                 model.discard(status.getLeft());
+                // TODO - prova
+                mainLatch.countDown();
+                System.out.println("Freed latch");
+            }
             else
-                subsequentDraws(status.getLeft());
-
-        }).start();
+                subsequentDraws(playerTurn, status.getLeft());
+        });
+        t.start();
     }
 }

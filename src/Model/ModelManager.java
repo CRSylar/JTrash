@@ -41,7 +41,7 @@ public class ModelManager extends Observable {
     /**
      * Array di player, contiene le istanze dei giocatori (CPU e Umani)
      */
-    private Player[] players;
+    private final Player[] players;
 
     public ModelManager(int players) {
         if (players > 2) {
@@ -67,7 +67,9 @@ public class ModelManager extends Observable {
         setChanged();
         notifyObservers(new Notification(
                 Notification.TYPES.FILLHAND,
-                player
+                player,
+                players.length
+
         ));
     }
 
@@ -93,7 +95,8 @@ public class ModelManager extends Observable {
         setChanged();
         notifyObservers(new Notification(
                 Notification.TYPES.DRAW,
-                c
+                c,
+                players.length
         ));
         return c;
     }
@@ -116,21 +119,21 @@ public class ModelManager extends Observable {
         int i = 0;
         int playerId = -1;
         for (Player player: players){
-            if (i < player.hand.getMaxSize()) {
+            if (i <= player.hand.getMaxSize()) {
                 i = player.hand.getMaxSize();
                 playerId = player.getId();
             }
         }
-
         return new Pair<>(playerId, i);
     }
 
-    public Pair<Card, Boolean> humanTurn(Card card) {
-        Pair<Card, Boolean> status = players[0].playTurn(card);
+    public Pair<Card, Boolean> computeTurn(int playerTurn, Card card) {
+        Pair<Card, Boolean> status = players[playerTurn].playTurn(card);
         setChanged();
         notifyObservers(new Notification(
                 Notification.TYPES.HAND,
-                new Pair<Integer, Hand>(0,players[0].hand)
+                new Pair<Integer, Hand>(playerTurn,players[playerTurn].hand),
+                players.length
         ));
         return status;
     }
@@ -141,7 +144,8 @@ public class ModelManager extends Observable {
         notifyObservers(
                 new Notification(
                         Notification.TYPES.DISCARD,
-                        card
+                        card,
+                        players.length
                 )
         );
     }

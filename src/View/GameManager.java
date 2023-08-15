@@ -4,6 +4,10 @@ import Model.Hand;
 import Model.Notification;
 import Model.Player;
 import Utilities.Pair;
+import View.NotifyHandlers.DiscardHandler;
+import View.NotifyHandlers.DrawHandler;
+import View.NotifyHandlers.FillHandHandler;
+import View.NotifyHandlers.HandHandler;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,21 +44,13 @@ public class GameManager extends JFrame implements Observer {
         // Table Panel initialization
         InitializeTable();
         InitializeDeckNDiscard();
-
-        for (int i=0; i < numberOfPlayers; i++) {
-            playerPanels[i] = createPlayerPanel(i-1);
-
-        }
-        // UI Nord
-        InitializeNorthPlayer();
         // UI Sud
         InitializeSouthPlayer();
-        if (numberOfPlayers > 2) {
-            //UI Ovest
-            InitializeWestPlayer();
-            if (numberOfPlayers > 3)
-                // UI est
-                InitializeEastPlayer();
+
+        switch (numberOfPlayers) {
+            case 2 -> initTwoPlayerGame();
+            case 3 -> initTreePlayerGame();
+            case 4 -> initFourPlayerGame();
         }
 
         // setting up the Drawn panel
@@ -67,6 +63,18 @@ public class GameManager extends JFrame implements Observer {
         add(tablePanel, BorderLayout.CENTER);
     }
 
+    private void initTwoPlayerGame() {
+        InitializeNorthPlayer(1);
+    }
+    private void initTreePlayerGame() {
+        InitializeNorthPlayer(2);
+        InitializeWestPlayer();
+    }
+    private void initFourPlayerGame() {
+        InitializeWestPlayer();
+        InitializeNorthPlayer(2);
+        InitializeEastPlayer();
+    }
     public JPanel getPlayerPanel(int idx) {return this.playerPanels[idx];}
     private void InitializeTable() {
         // Table Panel initialization
@@ -85,9 +93,9 @@ public class GameManager extends JFrame implements Observer {
         tablePanel.add(deckPanel, valueOf(1));
     }
 
-    private JPanel createPlayerPanel(int direction) {
+    private JPanel createPlayerPanel(boolean rotated) {
         JPanel playerPanel;
-        if (direction >= 1)
+        if (rotated)
             playerPanel = new JPanel(new GridLayout(5, 2));
         else
             playerPanel  = new JPanel(new GridLayout(2, 5));
@@ -99,20 +107,24 @@ public class GameManager extends JFrame implements Observer {
     }
 
     private void InitializeSouthPlayer() {
+        playerPanels[0] = createPlayerPanel(false);
         playerPanels[0].setBounds(420,430,440,250);
         this.tablePanel.add(playerPanels[0], valueOf(0));
     }
-    private void InitializeNorthPlayer() {
-        playerPanels[1].setBounds(420,10,440,250);
-        this.tablePanel.add(playerPanels[1], valueOf(0));
+    private void InitializeNorthPlayer(int pos) {
+        playerPanels[pos] = createPlayerPanel(false);
+        playerPanels[pos].setBounds(420,10,440,250);
+        this.tablePanel.add(playerPanels[pos], valueOf(0));
     }
 
     private void InitializeWestPlayer() {
-        playerPanels[2].setBounds(25,150,250,440);
-        this.tablePanel.add(playerPanels[2], valueOf(0));
+        playerPanels[1] = createPlayerPanel(true);
+        playerPanels[1].setBounds(25,150,250,440);
+        this.tablePanel.add(playerPanels[1], valueOf(0));
     }
 
     private void InitializeEastPlayer() {
+        playerPanels[3] = createPlayerPanel(true);
         playerPanels[3].setBounds(1000,150,250,440);
         this.tablePanel.add(playerPanels[3],  valueOf(0));
     }
@@ -132,50 +144,26 @@ public class GameManager extends JFrame implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         Notification n = (Notification) arg;
-
+        // Utilizzo lo Strategy pattern
+        NotifiyHandler handler = null;
         switch (n.getType()) {
-            case FILLHAND -> {
-                int id = ((Player)n.getObj()).getId();
-                playerPanels[id].setVisible(false);
-                playerPanels[id].add(new Card(id > 1));
-                playerPanels[id].setVisible(true);
-            }
-            case DRAW -> {
-                Model.Card c = ((Model.Card) n.getObj());
-                Image img = new ImageIcon(AssetLoader.getInstance().getCard(c.getValue(), c.getSuit()))
-                        .getImage().getScaledInstance(144,192, Image.SCALE_SMOOTH);
-                drawnCardPanel.add(
-                        new JLabel(
-                                new ImageIcon(img)
-                        )
+            case FILLHAND -> handler = new FillHandHandler(
+                    ((Player)n.getObj()).getId(),
+                    playerPanels[((Player)n.getObj()).getId()],
+                    n.getNumberOfPlayers()
                 );
-                drawnCardPanel.setVisible(true);
-            }
-            case HAND -> {
-                Pair<Integer, Hand> p = ((Pair<Integer, Model.Hand>)n.getObj());
-                int playerId = p.getLeft();
-                Model.Hand h = p.getRight();
-                playerPanels[playerId].setVisible(false);
-                playerPanels[playerId].removeAll();
-                for (int i=0; i< h.getHandSize(); i++) {
-                    if (h.getCard(i).isHide())
-                        playerPanels[playerId].add(new Card(playerId > 1));
-                    else
-                        playerPanels[playerId].add(new Card(h.getCard(i).getValue(),h.getCard(i).getSuit()));
-                }
-                playerPanels[playerId].setVisible(true);
+            case DRAW -> handler = new DrawHandler(((Model.Card) n.getObj()), drawnCardPanel);
 
-            }
-            case DISCARD -> {
-                Model.Card c = ((Model.Card)n.getObj());
-                Image img = new ImageIcon(AssetLoader.getInstance().getCard(c.getValue(), c.getSuit()))
-                        .getImage();
-                discardPanel.add(
-                        new JLabel(
-                                new ImageIcon(img)
-                        )
-                );
-            }
+            case HAND -> handler = new HandHandler(
+                    ((Pair<Integer, Model.Hand>)n.getObj()),
+                    playerPanels[((Pair<Integer, Model.Hand>)n.getObj()).getLeft()],
+                    n.getNumberOfPlayers()
+            );
+            case DISCARD -> handler = new DiscardHandler(
+                    ((Model.Card)n.getObj()),
+                    discardPanel
+            );
         }
+        handler.handle();
     }
 }
