@@ -24,7 +24,7 @@ public class GameController {
     CountDownLatch mainLatch = new CountDownLatch(1);
     MyMouseListener ms = new MyMouseListener(this);
 
-
+    CountDownLatch l;
 
     public GameController(int players) {
         // create the ModelManager
@@ -47,7 +47,8 @@ public class GameController {
         Thread gameThread = new Thread( () -> {
             // preparazione turno, model e view vengono resettate e preparate
             Player[] players = model.getPlayers();
-            while (!model.theresAWinner()) {
+            while (true) {
+                l = new CountDownLatch(model.getNumberOfPlayers());
                 // mischio il mazzo
                 model.getDeck().shuffle();
                 // svuoto la pila degli scarti
@@ -63,16 +64,22 @@ public class GameController {
                     fillPlayerHand(players[i]);
                 }
 
+                if (model.theresAWinner())
+                    break;
                 // svolgimento turno vero e proprio
                 try {
+                    l.await();
                     playTurn(model.getNumberOfPlayers());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
+                view.resetTable();
             }
+            System.out.println("Game won by Player "+ (model.getWinner()) );
         });
         gameThread.start();
-        System.out.println("Game won by Player "+ (model.getWinner()) );
+
     }
 
     /**
@@ -91,8 +98,8 @@ public class GameController {
         // Inizia da -1 cosi da non creare race conditions
         int playerTrashed = -1;
         while (turnStatus) {
-            System.out.println("tocca a giocatore "+(playerTurn % numberOfPlayers));
-            view.getPlayerPanel(playerTurn % numberOfPlayers).setBorder(
+            playerTurn = playerTurn % numberOfPlayers;
+            view.getPlayerPanel(playerTurn).setBorder(
                     BorderFactory.createLineBorder(Color.GREEN)
             );
             // Turno giocatore Umano
@@ -107,15 +114,23 @@ public class GameController {
             }
             // Turno CPU (p1/2/3)
             else
-                executeCpuTurn(playerTurn % numberOfPlayers);
-
+                executeCpuTurn(playerTurn);
 
             mainLatch.await();
+
+            if (model.getPlayers()[playerTurn].hand.handFullyVisible()) {
+                model.setPlayersThatGetOneCardLessNextRound(playerTurn);
+                // ulteriore controllo per evitare loop infiniti nei casi limite in cui
+                // in una partita a due un giocatore fa Trash e al giro successivo
+                // fa Trash anche l'altro (playerTrashed si sarebbe aggiornato all' infinito)
+                if (playerTrashed == -1)
+                    playerTrashed = playerTurn;
+            }
+
             // tolgo il bordo
-            view.getPlayerPanel(playerTurn % numberOfPlayers).setBorder(null);
+            view.getPlayerPanel(playerTurn).setBorder(null);
             // incremento il turno, tocca al giocatore successivo
             playerTurn++;
-            // TODO - Logica che assegna il trash, da prendere da altro proj
             if (playerTrashed == (playerTurn % numberOfPlayers))
                 turnStatus = false;
             mainLatch = new CountDownLatch(1);
@@ -145,7 +160,7 @@ public class GameController {
             } else {
                 Timer self = (Timer) e.getSource();
                 self.stop();
-                System.out.println("Model: Timer Stopped");
+                l.countDown();
             }
         }).start();
     }
@@ -155,7 +170,6 @@ public class GameController {
         // quelle nella pila degli scarti, messe al contrario
         // quindi per semplicità pesco da sotto
         if (model.getDeck().cardLeft() == 0){
-            System.out.println("Drawing from the bottom of the discard");
             subsequentDraws(playerTurn, model.drawFromBottom());
         }
         else {
@@ -179,20 +193,17 @@ public class GameController {
 
     private void subsequentDraws(int playerTurn, Card card) {
         Card c = model.notifyDraw(card);
-        Timer t = new Timer(1200, e -> {
+        new Timer(1200, e -> {
             view.getDrawnCardPanel().setVisible(false);
             view.getDrawnCardPanel().removeAll();
             Pair<Card, Boolean> status = model.computeTurn(playerTurn, c);
             ((Timer)e.getSource()).stop();
             if (status.getRight()) {
                 model.discard(status.getLeft());
-                // TODO - prova
                 mainLatch.countDown();
-                System.out.println("Freed latch");
             }
             else
                 subsequentDraws(playerTurn, status.getLeft());
-        });
-        t.start();
+        }).start();
     }
 }

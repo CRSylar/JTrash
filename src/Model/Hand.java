@@ -50,6 +50,7 @@ public class Hand {
             throw new NullPointerException("Can't add null card to hand");
         if (hand.size() == maxSize)
             throw new IllegalStateException("Hand already Full!");
+        card.setHided(true);
         hand.add(card);
     }
 
@@ -70,7 +71,6 @@ public class Hand {
      */
     public int getHandSize() { return hand.size();}
 
-    public int getMaxSize() {return maxSize;}
     /**
      * Metodo per accesso rapido a informazione sullo stato della
      * mano del giocatore, risponde alla domanda, puo accettare nuove carte ?

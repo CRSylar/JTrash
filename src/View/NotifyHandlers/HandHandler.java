@@ -21,9 +21,7 @@ public class HandHandler implements NotifiyHandler {
     }
     @Override
     public void handle() {
-        boolean rotated = false;
-        if (numberOfPlayers > 2 && (playerId == 1 || playerId == 3))
-            rotated = true;
+        boolean rotated = numberOfPlayers > 2 && (playerId == 1 || playerId == 3);
         playerPanel.setVisible(false);
         playerPanel.removeAll();
         for (int i=0; i< hand.getHandSize(); i++) {
@@ -32,7 +30,8 @@ public class HandHandler implements NotifiyHandler {
             else
                 playerPanel.add(new Card(
                         hand.getCard(i).getValue(),
-                        hand.getCard(i).getSuit()));
+                        hand.getCard(i).getSuit(),
+                        rotated));
         }
         playerPanel.setVisible(true);
     }

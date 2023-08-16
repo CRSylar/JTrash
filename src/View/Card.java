@@ -19,8 +19,14 @@ public class Card extends JPanel {
         add(cardUI);
     }
 
-    public Card(int value, SUITS suit) {
+    public Card(int value, SUITS suit, boolean rotated) {
         setBackground(new Color(0,102,0));
-        add(new JLabel(new ImageIcon(AssetLoader.getInstance().getCard(value, suit))));
+        AssetLoader al = AssetLoader.getInstance();
+        ImageIcon cardUI = new ImageIcon();
+        if (rotated)
+            cardUI.setImage(al.getRotatedCard(al.getCard(value, suit)));
+        else
+            cardUI.setImage(al.getCard(value, suit));
+        add(new JLabel(cardUI));
     }
 }

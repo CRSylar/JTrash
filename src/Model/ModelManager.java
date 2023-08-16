@@ -46,7 +46,6 @@ public class ModelManager extends Observable {
     public ModelManager(int players) {
         if (players > 2) {
             Deck tmp = new Deck();
-            System.out.println("Aggiungo secondo deck per 3+ giocatori");
             deck.mergeWithOtherDeck(tmp.getDeck());
         }
         this.numberOfPlayers = players;
@@ -60,7 +59,7 @@ public class ModelManager extends Observable {
     /**
      * Metodo di comodo
      * aggiunge una carta in mano al giocatore e notifica l'osservatore
-     * @param player TODO - Indice nell' array dei giocatori che rappresenta il giocatore la cui mano riempire
+     * @param player il giocatore la cui mano riempire
      */
     public void fillPlayerHand(Player player) {
         player.hand.addCard(deck.drawCard());
@@ -107,24 +106,8 @@ public class ModelManager extends Observable {
     public Deck getDeck() { return this.deck;}
     public DiscardPile getDiscardPile() {return this.discardPile;}
     public Player[] getPlayers() {return this.players;}
-    public int getCardDrawnFromBottomOfThePile() {return cardDrawnFromBottomOfThePile;}
     public Card drawFromBottom() {
         return discardPile.drawFromIndex(cardDrawnFromBottomOfThePile++);
-    }
-    public void resetDrawnFromBottom() {
-        cardDrawnFromBottomOfThePile = 0;
-    }
-
-    public Pair<Integer, Integer> getMaxHandSize() {
-        int i = 0;
-        int playerId = -1;
-        for (Player player: players){
-            if (i <= player.hand.getMaxSize()) {
-                i = player.hand.getMaxSize();
-                playerId = player.getId();
-            }
-        }
-        return new Pair<>(playerId, i);
     }
 
     public Pair<Card, Boolean> computeTurn(int playerTurn, Card card) {
@@ -148,5 +131,9 @@ public class ModelManager extends Observable {
                         players.length
                 )
         );
+    }
+
+    public void setPlayersThatGetOneCardLessNextRound(int playerTurn) {
+        playersThatGetOneCardLessNextRound[playerTurn] = 1;
     }
 }

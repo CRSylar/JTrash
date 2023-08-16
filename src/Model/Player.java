@@ -42,11 +42,10 @@ public class Player {
      * @return la carta che viene scartata alla fine del turno o dopo un Trash!
      */
     public Pair<Card, Boolean> playTurn(Card card) {
-        System.out.println("Drawn card: "+ card + " by player "+id);
         int cardValue = card.getValue();
         // se la mano è tutta visibile la carta viene automaticamente scartata
         if (hand.handFullyVisible())
-            return new Pair<Card, Boolean>(card, true);
+            return new Pair<>(card, true);
         // Se ho pescato un Jolly o un K devo attivare una "scelta" del player o della CPU
         if (cardValue == 0 || cardValue == 13) {
             // Per ora implemento una scelta della CPU molto semplice, inserisce il jolly alla prima posizione utile,

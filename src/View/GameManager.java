@@ -141,6 +141,12 @@ public class GameManager extends JFrame implements Observer {
         return drawnCardPanel;
     }
 
+    public void resetTable() {
+        discardPanel.resetPanel();
+        for (JPanel playerPanel : playerPanels)
+            playerPanel.removeAll();
+    }
+
     @Override
     public void update(Observable o, Object arg) {
         Notification n = (Notification) arg;
@@ -155,8 +161,8 @@ public class GameManager extends JFrame implements Observer {
             case DRAW -> handler = new DrawHandler(((Model.Card) n.getObj()), drawnCardPanel);
 
             case HAND -> handler = new HandHandler(
-                    ((Pair<Integer, Model.Hand>)n.getObj()),
-                    playerPanels[((Pair<Integer, Model.Hand>)n.getObj()).getLeft()],
+                    (Pair<Integer, Hand>)n.getObj(),
+                    playerPanels[((Pair<Integer, Hand>)n.getObj()).getLeft()],
                     n.getNumberOfPlayers()
             );
             case DISCARD -> handler = new DiscardHandler(
