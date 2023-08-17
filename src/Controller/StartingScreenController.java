@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Profile;
 import Utilities.GameResult;
 import View.StartingScreen;
 
@@ -23,6 +24,7 @@ public class StartingScreenController {
         // todo curva dei livelli
         /*
         * curva dei livelli puo essere tipo
+        * lv 0 -> 1 : un game giocato
         * lv 1 -> 2 : 100xp
         * lv 2 -> 3 : 300xp
         * lv 3 -> 4 : 600xp
