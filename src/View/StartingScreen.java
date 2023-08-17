@@ -1,12 +1,7 @@
 package View;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.net.URL;
-import java.util.Objects;
 
 public class StartingScreen  extends JFrame {
 
@@ -14,8 +9,11 @@ public class StartingScreen  extends JFrame {
     JWindow win = new JWindow();
 
     public StartingScreen() {
-        displaySplashScreen(win);
-
+        this(false);
+    }
+    public StartingScreen(boolean backToMenu) {
+        if (!backToMenu)
+            displaySplashScreen(win);
         displayMenuScreen();
         setVisible(true);
         win.setVisible(false);

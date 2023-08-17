@@ -1,13 +1,34 @@
 package Controller;
 
+import Utilities.GameResult;
 import View.StartingScreen;
 
 public class StartingScreenController {
 
     StartingScreen startingScreen;
     public StartingScreenController(StartingScreen startingScreen) {
+        this(startingScreen,null);
+    }
+    public StartingScreenController(StartingScreen startingScreen, GameResult lastGame) {
+        if (lastGame != null)
+            updatePlayerScore(lastGame.getResult());
         this.startingScreen = startingScreen;
         initListeners();
+    }
+
+    private void updatePlayerScore(boolean result) {
+        // TODO - Aggiornare qui lo score del player
+        // result = true -> win + 1, exp +50
+        // result = false -> lose + 1, exp +0
+        // todo curva dei livelli
+        /*
+        * curva dei livelli puo essere tipo
+        * lv 1 -> 2 : 100xp
+        * lv 2 -> 3 : 300xp
+        * lv 3 -> 4 : 600xp
+        * lv 4 -> 5 : 1000xp + ( rapporto w/l > 1)
+        *
+        * */
     }
 
     private void initListeners() {

@@ -2,11 +2,12 @@ package Controller;
 
 import Model.Card;
 import Model.ModelManager;
+import Utilities.GameResult;
 import Utilities.Pair;
 import Model.Player;
 import Utilities.Utils;
 import View.GameManager;
-import View.MenuPanel;
+import View.StartingScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,14 +80,15 @@ public class GameController {
             }
             System.out.println("Game won by Player "+ (model.getWinner()) );
             // TODO - animazione che annuncia il vincitore + salvataggio risultato
-            disposeGame();
+            disposeGame(model.getWinner());
         });
         gameThread.start();
 
     }
 
-    private void disposeGame() {
-        new MenuPanel();
+    private void disposeGame(int winner) {
+        StartingScreen sc = new StartingScreen(true);
+        StartingScreenController ssc = new StartingScreenController(sc, new GameResult(winner));
         view.dispose();
     }
 
