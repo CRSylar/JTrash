@@ -1,13 +1,28 @@
 package View;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
 
 public class StartingScreen  extends JFrame {
 
     JButton profile,exit, twoPlayers, threePlayers, fourPlayers;
+    JWindow win = new JWindow();
 
     public StartingScreen() {
+        displaySplashScreen(win);
+
+        displayMenuScreen();
+        setVisible(true);
+        win.setVisible(false);
+        win.dispose();
+    }
+
+    private void displayMenuScreen() {
         setTitle("JTrash Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
@@ -15,8 +30,6 @@ public class StartingScreen  extends JFrame {
         setResizable(false);
 
         MenuPanel contentPanel = new MenuPanel();
-        contentPanel.timer.start();
-
 
         Dimension buttonDimension = new Dimension(200, 50);
 
@@ -51,7 +64,21 @@ public class StartingScreen  extends JFrame {
         contentPanel.add(exit, buttonsGbs);
 
         add(contentPanel);
-        setVisible(true);
+    }
+
+    private void displaySplashScreen(JWindow win) {
+        win.setSize(800,600);
+        win.setLocationRelativeTo(null);
+        try {
+            ImageIcon img = new ImageIcon("assets/splashScreen.gif");
+            JLabel splashImage = new JLabel();
+            splashImage.setIcon(img);
+            win.getContentPane().add(splashImage);
+            win.setVisible(true);
+            Thread.sleep(5000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public JButton getProfileButton () {return profile;}

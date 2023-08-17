@@ -81,7 +81,7 @@ public class ModelManager extends Observable {
     public boolean theresAWinner() {
         int i = 0;
         for (Player player : players){
-            if (player != null && player.hand.getHandSize() == 0) {
+            if (player != null && player.hand.getMaxSize() == 0) {
                 winner = i;
                 return true;
             }

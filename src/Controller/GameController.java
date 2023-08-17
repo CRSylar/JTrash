@@ -6,6 +6,7 @@ import Utilities.Pair;
 import Model.Player;
 import Utilities.Utils;
 import View.GameManager;
+import View.MenuPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -77,9 +78,16 @@ public class GameController {
                 view.resetTable();
             }
             System.out.println("Game won by Player "+ (model.getWinner()) );
+            // TODO - animazione che annuncia il vincitore + salvataggio risultato
+            disposeGame();
         });
         gameThread.start();
 
+    }
+
+    private void disposeGame() {
+        new MenuPanel();
+        view.dispose();
     }
 
     /**

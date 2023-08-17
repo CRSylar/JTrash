@@ -66,10 +66,18 @@ public class Hand {
     }
 
     /**
-     * Metodo per controllare la dimensione della mano
+     * Metodo per controllare la dimensione attuale della mano
      * @return un intero.
      */
     public int getHandSize() { return hand.size();}
+
+    /**
+     * Metodo per controllare la dimensione massima della mano
+     * @return un intero.
+     */
+    public int getMaxSize() {
+        return maxSize;
+    }
 
     /**
      * Metodo per accesso rapido a informazione sullo stato della
