@@ -79,15 +79,18 @@ public class ModelManager extends Observable {
      * @return un booleano.
      */
     public boolean theresAWinner() {
+        boolean ret = false;
         int i = 0;
         for (Player player : players){
             if (player != null && player.hand.getMaxSize() == 0) {
                 winner = i;
-                return true;
+                if (ret)
+                    winner = 4;
+                ret = true;
             }
             i++;
         }
-        return false;
+        return ret;
     }
 
     public Card notifyDraw(Card c) {

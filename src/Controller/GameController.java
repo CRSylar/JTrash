@@ -7,6 +7,7 @@ import Utilities.Pair;
 import Model.Player;
 import Utilities.Utils;
 import View.GameManager;
+import View.Sounds;
 import View.StartingScreen;
 
 import javax.swing.*;
@@ -50,6 +51,7 @@ public class GameController {
             // preparazione turno, model e view vengono resettate e preparate
             Player[] players = model.getPlayers();
             while (true) {
+                Sounds.getInstance().play("assets/sounds/deck-shuffle.wav", false);
                 l = new CountDownLatch(model.getNumberOfPlayers());
                 // mischio il mazzo
                 model.getDeck().shuffle();
@@ -80,6 +82,7 @@ public class GameController {
             }
             System.out.println("Game won by Player "+ (model.getWinner()) );
             // TODO - animazione che annuncia il vincitore + salvataggio risultato
+            Sounds.getInstance().play("assets/sounds/player-wins.wav", false);
             disposeGame(model.getWinner());
         });
         gameThread.start();

@@ -1,7 +1,7 @@
 package Controller;
 
-import Model.Profile;
 import Utilities.GameResult;
+import View.Sounds;
 import View.StartingScreen;
 
 public class StartingScreenController {
@@ -12,16 +12,18 @@ public class StartingScreenController {
     }
     public StartingScreenController(StartingScreen startingScreen, GameResult lastGame) {
         if (lastGame != null)
-            updatePlayerScore(lastGame.getResult());
+            updatePlayerScore(lastGame.hasHumanWon(), lastGame.isDraw());
         this.startingScreen = startingScreen;
         initListeners();
+        Sounds.getInstance().stop();
     }
 
-    private void updatePlayerScore(boolean result) {
+    private void updatePlayerScore(boolean humanWon, boolean draw) {
         // TODO - Aggiornare qui lo score del player
-        // result = true -> win + 1, exp +50
-        // result = false -> lose + 1, exp +0
-        // todo curva dei livelli
+        // humanWon = true -> playedGames +1, win + 1, exp +50
+        // humanWon = false -> playedGames +1, lose + 1, exp +0
+        // draw = true -> playedGames +1, exp +25
+        //
         /*
         * curva dei livelli puo essere tipo
         * lv 0 -> 1 : un game giocato
@@ -46,6 +48,7 @@ public class StartingScreenController {
         System.out.println("Starting with "+players);
         // inserire qui nuova Schermata
         GameController gm = new GameController(players);
+        Sounds.getInstance().play("assets/sounds/ambient.wav", true);
         gm.start();
         // dispose chiude la schermo attuale, lasciando attivo quello creato
         // da GameController

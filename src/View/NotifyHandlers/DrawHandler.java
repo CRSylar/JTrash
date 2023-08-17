@@ -2,7 +2,9 @@ package View.NotifyHandlers;
 
 import View.AssetLoader;
 import View.NotifiyHandler;
+import View.Sounds;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,6 +26,7 @@ public class DrawHandler implements NotifiyHandler {
                         new ImageIcon(img)
                 )
         );
+        Sounds.getInstance().play("assets/sounds/flipcard.wav", false);
         drawnCardPanel.setVisible(true);
     }
 }

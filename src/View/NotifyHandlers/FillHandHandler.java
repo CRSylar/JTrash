@@ -2,6 +2,7 @@ package View.NotifyHandlers;
 
 import View.Card;
 import View.NotifiyHandler;
+import View.Sounds;
 
 import javax.swing.*;
 
@@ -23,5 +24,6 @@ public class FillHandHandler implements NotifiyHandler {
         playerPanel.setVisible(false);
         playerPanel.add(new Card(rotated));
         playerPanel.setVisible(true);
+        Sounds.getInstance().play("assets/sounds/flipcard.wav", false);
     }
 }
