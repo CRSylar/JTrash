@@ -76,12 +76,12 @@ public class Profile implements Serializable {
     private void checkForLevelUp() {
         level = Math.min(
                 4,
-                exp / Math.max(
-                        1,(50 * level) // evitare divisione per 0!
+                exp / (50 *
+                        Math.max(1,level) // evitare divisione per 0!
                 ));
+
         if (level == 0 && totalGamesPlayed > 0)
             level += 1;
-
         if (level == 4 && exp >= 1000 && (wins/losses > 1))
             level += 1;
     }
