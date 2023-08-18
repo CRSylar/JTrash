@@ -23,16 +23,15 @@ public class FileWriterReader {
     }
 
     public Profile Read() throws IOException, ClassNotFoundException {
+        try {
             FileInputStream fi = new FileInputStream("savedGames.dat");
             ObjectInputStream oi = new ObjectInputStream(fi);
-            Profile profile = null;
-        try {
-            profile = (Profile)oi.readObject();
-        } catch (EOFException e) {
+            Profile profile = (Profile)oi.readObject();
             oi.close();
             fi.close();
+            return  profile;
+        } catch (EOFException e) {
+            return null;
         }
-        return  profile;
-
     }
 }

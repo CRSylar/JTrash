@@ -38,7 +38,7 @@ public class StartingScreen  extends JFrame {
         if (name == null)
             name = "";
         }
-        return name;w
+        return name;
     }
 
     private void displayMenuScreen() {

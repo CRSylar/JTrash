@@ -57,6 +57,6 @@ public class StartingScreenController {
     }
 
     private void showProfile() {
-        System.out.println("Profile");
+        System.out.println(Profile.getProfile());
     }
 }
