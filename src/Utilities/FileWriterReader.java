@@ -3,7 +3,6 @@ package Utilities;
 import Model.Profile;
 
 import java.io.*;
-import java.util.ArrayList;
 
 public class FileWriterReader {
 
@@ -26,16 +25,14 @@ public class FileWriterReader {
     public Profile Read() throws IOException, ClassNotFoundException {
             FileInputStream fi = new FileInputStream("savedGames.dat");
             ObjectInputStream oi = new ObjectInputStream(fi);
-            ArrayList<Profile> profiles = new ArrayList<>();
+            Profile profile = null;
         try {
-            while (true)
-                profiles.add((Profile)oi.readObject());
-
+            profile = (Profile)oi.readObject();
         } catch (EOFException e) {
-            //profiles.stream().filter()
             oi.close();
             fi.close();
         }
-        return null;
+        return  profile;
+
     }
 }

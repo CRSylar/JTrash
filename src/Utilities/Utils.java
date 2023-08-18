@@ -2,6 +2,9 @@ package Utilities;
 
 import Model.Card;
 import Model.Hand;
+import Model.Profile;
+
+import java.io.IOException;
 
 public class Utils {
 
@@ -40,5 +43,23 @@ public class Utils {
      */
     public static boolean isUnplayable(int cardValue, int handSize) {
         return cardValue > handSize;
+    }
+
+    public static void save() {
+        try {
+            FileWriterReader.getInstance().Write(Profile.getProfile());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void readFileAndLoadProfile() {
+        try {
+            Profile p = FileWriterReader.getInstance().Read();
+            Profile.loadProfile(p);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println("No Saved Profile Found!");
+        }
     }
 }

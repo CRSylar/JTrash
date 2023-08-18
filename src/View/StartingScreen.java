@@ -1,5 +1,7 @@
 package View;
 
+import Model.Profile;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,10 +16,29 @@ public class StartingScreen  extends JFrame {
     public StartingScreen(boolean backToMenu) {
         if (!backToMenu)
             displaySplashScreen(win);
+
         displayMenuScreen();
         setVisible(true);
         win.setVisible(false);
         win.dispose();
+
+    }
+
+    public String showProfileCreationDialog() {
+        String name = "";
+        while (name.length() < 3) {
+        name = (String) JOptionPane.showInputDialog(
+                this,
+                "Create a new Profile, please use at least 3 characters",
+                "Profile Creation",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                null,
+                "");
+        if (name == null)
+            name = "";
+        }
+        return name;w
     }
 
     private void displayMenuScreen() {
@@ -73,7 +94,7 @@ public class StartingScreen  extends JFrame {
             splashImage.setIcon(img);
             win.getContentPane().add(splashImage);
             win.setVisible(true);
-            Thread.sleep(5000);
+            Thread.sleep(100); // TODO reset to 5000
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,16 +1,22 @@
 package Utilities;
 
 public class GameResult {
-    private final boolean humanWon;
-    private final boolean draw;
+
+    RESULT result;
+
+    public enum RESULT {
+        WIN,
+        DRAW,
+        LOSS
+    }
 
     public GameResult(int winner) {
-        humanWon = winner == 0;
-        draw = winner == 4;
+        result = winner == 4 ?
+                RESULT.DRAW : winner == 0 ?
+                    RESULT.WIN : RESULT.LOSS;
     }
-    public boolean hasHumanWon() {return humanWon;}
 
-    public boolean isDraw() {
-        return draw;
+    public RESULT getResult() {
+        return result;
     }
 }

@@ -1,8 +1,13 @@
 package Controller;
 
+import Model.Profile;
+import Utilities.FileWriterReader;
 import Utilities.GameResult;
+import Utilities.Utils;
 import View.Sounds;
 import View.StartingScreen;
+
+import java.io.IOException;
 
 public class StartingScreenController {
 
@@ -12,28 +17,24 @@ public class StartingScreenController {
     }
     public StartingScreenController(StartingScreen startingScreen, GameResult lastGame) {
         if (lastGame != null)
-            updatePlayerScore(lastGame.hasHumanWon(), lastGame.isDraw());
+            updatePlayerScore(lastGame.getResult());
         this.startingScreen = startingScreen;
+
+        if (!Profile.isProfileLoaded()) {
+           String name = this.startingScreen.showProfileCreationDialog();
+           Profile.createNewProfile(name);
+           Utils.save();
+        }
+
         initListeners();
         Sounds.getInstance().stop();
     }
 
-    private void updatePlayerScore(boolean humanWon, boolean draw) {
-        // TODO - Aggiornare qui lo score del player
-        // humanWon = true -> playedGames +1, win + 1, exp +50
-        // humanWon = false -> playedGames +1, lose + 1, exp +0
-        // draw = true -> playedGames +1, exp +25
-        //
-        /*
-        * curva dei livelli puo essere tipo
-        * lv 0 -> 1 : un game giocato
-        * lv 1 -> 2 : 100xp
-        * lv 2 -> 3 : 300xp
-        * lv 3 -> 4 : 600xp
-        * lv 4 -> 5 : 1000xp + ( rapporto w/l > 1)
-        *
-        * */
+    private void updatePlayerScore(GameResult.RESULT result) {
+        Profile.getProfile().updateProfile(result);
+        Utils.save();
     }
+
 
     private void initListeners() {
         startingScreen.getExitButton().addActionListener(e -> System.exit(0));
