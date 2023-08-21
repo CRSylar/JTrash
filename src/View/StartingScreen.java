@@ -1,7 +1,5 @@
 package View;
 
-import Model.Profile;
-
 import javax.swing.*;
 import java.awt.*;
 

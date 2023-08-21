@@ -1,13 +1,13 @@
 package Controller;
 
 import Model.Profile;
-import Utilities.FileWriterReader;
 import Utilities.GameResult;
 import Utilities.Utils;
+import View.ProfileManager;
 import View.Sounds;
 import View.StartingScreen;
 
-import java.io.IOException;
+import javax.swing.*;
 
 public class StartingScreenController {
 
@@ -58,5 +58,36 @@ public class StartingScreenController {
 
     private void showProfile() {
         System.out.println(Profile.getProfile());
+        ProfileManager pm = new ProfileManager(Profile.getProfile());
+        initProfileListeners(pm);
+        startingScreen.dispose();
     }
+
+    private void initProfileListeners(ProfileManager pm) {
+        pm.getDeleteButton().addActionListener(e -> deleteProfileAndExit(pm));
+        pm.getChangeAvatarButton().addActionListener(e -> showAvatarsModal(pm));
+    }
+
+    private void showAvatarsModal(ProfileManager pm) {
+        String[] opt = {"A","b","c"};
+        int newPic = JOptionPane.showOptionDialog(
+                pm,
+                "Choose new avatar",
+                "",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                opt,
+                opt[0]
+                );
+        Profile.getProfile().setNewAvatar(newPic);
+    }
+
+    private void deleteProfileAndExit(ProfileManager pm) {
+        Profile.loadProfile(null);
+        StartingScreen sc = new StartingScreen();
+        StartingScreenController ssc = new StartingScreenController(sc);
+        pm.dispose();
+    }
+
 }

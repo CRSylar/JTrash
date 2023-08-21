@@ -12,6 +12,8 @@ public class Profile implements Serializable {
     private int losses;
     private int exp;
 
+    private int pic;
+
     private Profile(String name) {
         this.name = name;
         this.level = 0;
@@ -19,6 +21,11 @@ public class Profile implements Serializable {
         this.wins = 0;
         this.losses = 0;
         this.exp = 0;
+        this.pic = 0;
+    }
+
+    public void setNewAvatar(int newPic) {
+        this.pic = newPic;
     }
 
     private static class ProfileSingleton {
@@ -61,6 +68,10 @@ public class Profile implements Serializable {
         return wins;
     }
 
+    public int getPicture() {
+        return pic;
+    }
+
     public void updateProfile(GameResult.RESULT result) {
         totalGamesPlayed += 1;
 
@@ -88,6 +99,6 @@ public class Profile implements Serializable {
 
     @Override
     public String toString() {
-        return name+":"+level+"-tg:"+totalGamesPlayed+"-w:"+wins+"-l:"+losses+"-exp:"+exp;
+        return name+":"+level+"-tg:"+totalGamesPlayed+"-w:"+wins+"-l:"+losses+"-exp:"+exp+"-profile"+pic;
     }
 }

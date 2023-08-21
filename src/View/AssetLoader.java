@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -52,12 +53,19 @@ public class AssetLoader {
      */
     private BufferedImage RedJolly;
 
+    private List<BufferedImage> avatars = new ArrayList<>();
+
     /**
      * Costruttore PRIVATO, carica gli tutti gli asset nei relativi membri
      * @throws IOException in caso non sia possibile leggere correttamente uno degli asset
      */
     private AssetLoader() {
         try {
+            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar1.png"))));
+            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar2.png"))));
+            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar3.png"))));
+            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar4.png"))));
+
             cardBack = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/cardBack.png")));
             BlackJolly = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Cards/53.png")));
             RedJolly = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Cards/54.png")));
@@ -105,6 +113,10 @@ public class AssetLoader {
      * @return l'asset caricato alla creazione del singleton
      */
     public BufferedImage getEmptyPile() {return emptyPile;}
+
+    public List<BufferedImage> getAvatars() {
+        return this.avatars;
+    }
 
     /**
      * Metodo che ritorna l'immagine del Jolly nero
