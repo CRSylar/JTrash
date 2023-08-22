@@ -1,6 +1,7 @@
 package View;
 
 import Model.SUITS;
+import Utilities.Pair;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -53,7 +54,7 @@ public class AssetLoader {
      */
     private BufferedImage RedJolly;
 
-    private List<BufferedImage> avatars = new ArrayList<>();
+    private List<Pair<Integer, BufferedImage>> avatars = new ArrayList<>();
 
     /**
      * Costruttore PRIVATO, carica gli tutti gli asset nei relativi membri
@@ -61,10 +62,10 @@ public class AssetLoader {
      */
     private AssetLoader() {
         try {
-            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar1.png"))));
-            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar2.png"))));
-            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar3.png"))));
-            avatars.add(ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar4.png"))));
+            avatars.add(new Pair<>(0,ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar1.png")))));
+            avatars.add(new Pair<>(1,ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar2.png")))));
+            avatars.add(new Pair<>(2,ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar3.png")))));
+            avatars.add(new Pair<>(3,ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/avatars/avatar4.png")))));
 
             cardBack = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/cardBack.png")));
             BlackJolly = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/Cards/53.png")));
@@ -114,7 +115,7 @@ public class AssetLoader {
      */
     public BufferedImage getEmptyPile() {return emptyPile;}
 
-    public List<BufferedImage> getAvatars() {
+    public List<Pair<Integer, BufferedImage>> getAvatars() {
         return this.avatars;
     }
 

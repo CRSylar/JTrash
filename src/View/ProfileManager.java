@@ -2,13 +2,8 @@ package View;
 
 import Model.Profile;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class ProfileManager extends JFrame {
 
@@ -29,19 +24,36 @@ public class ProfileManager extends JFrame {
         setFormAvatar(profile.getPicture());
         add(formAvatar, BorderLayout.NORTH);
         add(formPanel, BorderLayout.CENTER);
-        add(deleteButton, BorderLayout.SOUTH);
+        // Aggiungere qui un pannello che ospita i 2 bottoni
+        add(buttonsPanel(), BorderLayout.SOUTH);
+        //add(deleteButton, BorderLayout.SOUTH);
         //add(backToMenu, BorderLayout.SOUTH);
         setVisible(true);
     }
 
-    private void setFormAvatar(int pic) {
+    private JPanel buttonsPanel() {
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0,3));
+        panel.add(deleteButton);
+        panel.add(new JPanel());
+        panel.add(backToMenu);
+        return panel;
+    }
+
+    public void setFormAvatar(int pic) {
+        formAvatar.removeAll();
         formAvatar.setLayout(new GridBagLayout());
+
         formAvatar.add(
                 new JLabel(new ImageIcon(
-                        AssetLoader.getInstance().getAvatars().get(pic)
+                        AssetLoader.getInstance().getAvatars().get(pic).getRight()
                 ))
         );
+        System.out.println("Resetting with pic n: "+pic);
         formAvatar.add(changeAvatarButton);
+        formAvatar.revalidate();
+        formAvatar.repaint();
     }
 
     private void setProfileForm(Profile profile) {
@@ -79,5 +91,9 @@ public class ProfileManager extends JFrame {
 
     public JButton getChangeAvatarButton() {
         return changeAvatarButton;
+    }
+
+    public JButton getBackButton() {
+        return backToMenu;
     }
 }
