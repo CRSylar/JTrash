@@ -9,6 +9,10 @@ import Utilities.Utils;
  */
 public class Player {
 
+    /**
+     * Identificativo del player
+     * utile per poter gestire una futura visualizzazione
+     */
     private final int id;
 
     /**
@@ -16,7 +20,7 @@ public class Player {
      */
     public Hand hand;
     /**
-     * Costruisce un player con una mano "base" di 10 carte
+     * Costruisce un player, e gli assegna una mano che conterrà 10 carte (il massimo)
      */
     public Player(int id) {
         this.id = id;
@@ -35,9 +39,14 @@ public class Player {
 
 
     /**
-     * Metodo che effettua le giocate "obbligate" per il turno,
-     * Partendo da una carta pescata dal mazzo (qualsiasi)
-     * oppure dalla pila degli scarti (in questo caso la carta è sicuramente nel range 1-10/jolly)
+     * Tenta di giocare la carta, controllando se è la mano è già completamente visibile (Trash),
+     * se la carta è giocabile, se è un Jolly e cosi via.
+     * Ritorna un Pair composto da:
+     * - Left: la stessa carta nel caso non sia giocabile
+     *          oppure una nuova carta (scambiando la carta giocabile ottenuta)
+     *          da testare ancora
+     * - Right: lo stato del turno, ovvero true in caso sia terminato (carta in left da scartare)
+     *          o false (carta in left sconosciuta e da rivalutare)
      * @param card la carta descritta sopra
      * @return la carta che viene scartata alla fine del turno o dopo un Trash!
      */
@@ -90,6 +99,11 @@ public class Player {
         return s.toString();
     }
 
+    /**
+     * Controlla se la carta puo essere utilizzata come Jolly
+     * @param cardValue il valore numerico della carta
+     * @return la carta è Jolly ? booleano
+     */
     private boolean isJolly(int cardValue) {
         return (
                 hand.getCard(cardValue - 1).getValue() == 0
@@ -98,5 +112,9 @@ public class Player {
                 );
     }
 
+    /**
+     *
+     * @return l'id del player
+     */
     public int getId() {return id;}
 }

@@ -4,8 +4,6 @@ import Model.Profile;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class ProfileManager extends JFrame {
 
@@ -57,7 +55,7 @@ public class ProfileManager extends JFrame {
 
     private void setProfileForm(Profile profile) {
         formPanel.setLayout(new GridLayout(0,2,0,2));
-        if (!Profile.isProfileLoaded())
+        if (Profile.isProfileLoaded())
             // TODO il profilo non è caricato (non dovrebbe succedere) fare qualcosa
             return;
 

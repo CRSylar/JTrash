@@ -37,7 +37,7 @@ public class MainMenuController {
             updatePlayerScore(lastGame.getResult());
         this.startingScreen = startingScreen;
 
-        if (!Profile.isProfileLoaded()) {
+        if (Profile.isProfileLoaded()) {
            String name = this.startingScreen.showProfileCreationDialog();
            Profile.createNewProfile(name);
            Utils.save();
