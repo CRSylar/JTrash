@@ -1,7 +1,5 @@
 package View;
 
-import Model.SUITS;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,7 +17,7 @@ public class Card extends JPanel {
         add(cardUI);
     }
 
-    public Card(int value, SUITS suit, boolean rotated) {
+    public Card(int value, Model.Card.SUITS suit, boolean rotated) {
         setBackground(new Color(0,102,0));
         AssetLoader al = AssetLoader.getInstance();
         ImageIcon cardUI = new ImageIcon();

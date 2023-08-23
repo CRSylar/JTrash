@@ -26,7 +26,7 @@ public class DiscardPile {
     }
 
     /**
-     * Metodo per aggiungere una carta alla pila degli scarti
+     * Aggiunge una carta alla pila degli scarti
      * @param card la carta da aggiungere
      * @throws NullPointerException se la carta è un puntatore a null;
      */
@@ -37,7 +37,7 @@ public class DiscardPile {
     }
 
     /**
-     * Metodo per pescare una carta dalla cima della pila degli scarti
+     * Pesca una carta dalla cima della pila degli scarti
      *
      * @return la carta in cima alla pila
      */
@@ -50,20 +50,20 @@ public class DiscardPile {
     }
 
     /**
-     * Metodo che ritorna la size dello stack
+     * Per Ottenere la size dello stack
      * @return la dimensione come intero
      */
     public int size() { return pile.size();}
 
     /**
-     * Metodo che "guarda" la carta in cima allo stack
-     * NOTA NON la rimuove
-     * @return la carta
+     * Metodo che "guarda" la carta in cima allo stack (ovvero l'ultima inserita)
+     * NB. NON la rimuove
+     * @return la carta in cima
      */
     public Card peek() {return pile.peek();}
 
     /**
-     * Metodo usato per svuotare la pila degli scarti
+     * Svuota la pila degli scarti
      */
     public void clearPile() { pile.clear();}
 

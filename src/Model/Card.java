@@ -6,6 +6,21 @@ package Model;
  */
 public class Card {
     /**
+     * Enumerazione che definisce i semi delle carte;
+     * rispettivamente:
+     * Picche,
+     * Cuori
+     * Quadri
+     * Fiori.
+     */
+    public enum SUITS {
+        SPADES,
+        HEARTS,
+        DIAMONDS,
+        CLUBS
+    }
+
+    /**
      * Il valore della carta, da 0 a 13:
      * 0 Rappresenta il Jolly,
      * da 11 a 13 rappresentano rispettivamente J, Q, K
@@ -97,4 +112,5 @@ public class Card {
 
     public boolean isHide() { return isHided;}
     public void setHided(boolean state) { this.isHided = state;}
+
 }

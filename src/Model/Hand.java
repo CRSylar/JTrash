@@ -40,7 +40,7 @@ public class Hand {
 
 
     /**
-     * Metodo per aggiungere Carte alla mano del player
+     * Aggiunge Carte alla mano del player
      * @param card La carta da aggiungere
      * @throws NullPointerException in caso la Card sia null solleva la relativa eccezione;
      * @throws IllegalStateException Se proviamo ad aggiungere carte a una mano gia Piena (maxSize);
@@ -55,24 +55,13 @@ public class Hand {
     }
 
     /**
-     * Metodo per rimuovere una carta dalla mano del giocatore
-     * @param position la posizione nella mano della carta da rimuovere
-     * @throws ArrayIndexOutOfBoundsException in caso la posizione non sia valida
-     */
-    public void removeCard(int position) {
-        if (position < 0 || position > hand.size() -1)
-            throw new ArrayIndexOutOfBoundsException("Can' remove card at illegal index ( < 0 Or > length): "+position);
-        hand.remove(position);
-    }
-
-    /**
-     * Metodo per controllare la dimensione attuale della mano
+     * Per leggere dimensione attuale della mano del giocatore
      * @return un intero.
      */
     public int getHandSize() { return hand.size();}
 
     /**
-     * Metodo per controllare la dimensione massima della mano
+     * Ottieni la dimensione massima della mano per il turno in corso
      * @return un intero.
      */
     public int getMaxSize() {
@@ -80,16 +69,16 @@ public class Hand {
     }
 
     /**
-     * Metodo per accesso rapido a informazione sullo stato della
+     * Accesso rapido a informazione sullo stato della
      * mano del giocatore, risponde alla domanda, puo accettare nuove carte ?
-     * @return la risposta booleana alla domanda
+     * @return la risposta alla domanda (booleano)
      */
     public boolean canHoldMoreCard() {
         return (maxSize - hand.size()) > 0;
     }
 
     /**
-     * Metodo che scambia la carta "pescata" con quella in mano, andando anche a impostare la carta
+     * Scambia la carta "pescata" con quella in mano, andando anche a impostare la carta
      * aggiunta alla mano come visibile, infine ritorna la carta "tolta" dalla mano per la nuova iterazione
      * @param position la posizione della carta da inserire, corrisponde al valore della nuova carta o a un Jolly
      * @param newCard l' istanza della carta da inserire
@@ -103,7 +92,7 @@ public class Hand {
     }
 
     /**
-     * Metodo che controlla se la mano di un giocatore è completamente visibile
+     * Controlla se la mano di un giocatore è completamente visibile
      * il che significa che ha fatto Trash e il turno finisce
      * @return booleano, true se la mano è tutta visibile (trash), false altrimenti
      */
@@ -116,15 +105,15 @@ public class Hand {
     }
 
     /**
-     * Metodo di utility per fare una query sullo stato di una carta
+     * Utility per fare una query sullo stato di una carta
      * ritorna il risultato del metodo isHide, un booleano
      * @param position la posizione della carta da cercare
      * @return lo stato di visibilità dalla carta
      */
     public boolean cardIsHide(int position) { return hand.get(position-1).isHide();}
     /**
-     * Metodo per "estrarre" una carta dalla mano del giocatore,
-     * NOTA la carta non viene eliminata dalla mano!
+     * Guarda la carta dalla mano del giocatore a una precisa posizione,
+     * NOTA la carta non viene rimossa dalla mano!
      * @param position la posizione nella mano della carta da rimuovere
      * @throws ArrayIndexOutOfBoundsException in caso la posizione non sia valida
      */

@@ -210,11 +210,11 @@ public class GameController {
     }
 
     private void subsequentDraws(int playerTurn, Card card) {
-        Card c = model.notifyDraw(card);
+        model.notifyDraw(card);
         new Timer(1200, e -> {
             view.getDrawnCardPanel().setVisible(false);
             view.getDrawnCardPanel().removeAll();
-            Pair<Card, Boolean> status = model.computeTurn(playerTurn, c);
+            Pair<Card, Boolean> status = model.computeTurn(playerTurn, card);
             ((Timer)e.getSource()).stop();
             if (status.getRight()) {
                 model.discard(status.getLeft());

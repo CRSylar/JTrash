@@ -1,6 +1,6 @@
 package View;
 
-import Model.SUITS;
+import Model.Card;
 import Utilities.Pair;
 
 import javax.imageio.ImageIO;
@@ -136,7 +136,7 @@ public class AssetLoader {
      * @param suits il seme della carta richiesta
      * @return l'immagine della carta del valore e seme richiesto
      */
-    public BufferedImage getCard(int value, SUITS suits) {
+    public BufferedImage getCard(int value, Card.SUITS suits) {
         if (value == 0) return getBlackJolly();
 
         if (value < 1 || value > 13) throw new IllegalArgumentException("Card Value must be a number from 1 o 13");
