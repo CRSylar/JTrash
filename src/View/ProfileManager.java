@@ -4,6 +4,8 @@ import Model.Profile;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class ProfileManager extends JFrame {
 
@@ -11,7 +13,7 @@ public class ProfileManager extends JFrame {
     JPanel formAvatar = new JPanel();
     JButton deleteButton = new JButton("Delete Profile");
     JButton changeAvatarButton = new JButton("Change Avatar");
-    JButton backToMenu = new JButton("Back to Menu");
+    JButton backToMenuButton = new JButton("Back to Menu");
 
     public ProfileManager(Profile profile) {
         setTitle("JTrash - Profile");
@@ -24,10 +26,7 @@ public class ProfileManager extends JFrame {
         setFormAvatar(profile.getPicture());
         add(formAvatar, BorderLayout.NORTH);
         add(formPanel, BorderLayout.CENTER);
-        // Aggiungere qui un pannello che ospita i 2 bottoni
         add(buttonsPanel(), BorderLayout.SOUTH);
-        //add(deleteButton, BorderLayout.SOUTH);
-        //add(backToMenu, BorderLayout.SOUTH);
         setVisible(true);
     }
 
@@ -37,7 +36,7 @@ public class ProfileManager extends JFrame {
         panel.setLayout(new GridLayout(0,3));
         panel.add(deleteButton);
         panel.add(new JPanel());
-        panel.add(backToMenu);
+        panel.add(backToMenuButton);
         return panel;
     }
 
@@ -85,6 +84,17 @@ public class ProfileManager extends JFrame {
         t.setSize(300, 100);
         formPanel.add(t);
     }
+
+    public JButton iconToButton(JLabel avatarIcon, JOptionPane pane) {
+        int iconId = Integer.parseInt(avatarIcon.getText());
+        avatarIcon.setText(null);
+        JButton jButton = new JButton();
+        jButton.setBorder(null);
+        jButton.setBackground(null);
+        jButton.add(avatarIcon);
+        jButton.addActionListener(e -> pane.setValue(iconId));
+        return jButton;
+    }
     public JButton getDeleteButton() {
         return deleteButton;
     }
@@ -93,7 +103,7 @@ public class ProfileManager extends JFrame {
         return changeAvatarButton;
     }
 
-    public JButton getBackButton() {
-        return backToMenu;
+    public JButton getBackToMenuButton() {
+        return backToMenuButton;
     }
 }

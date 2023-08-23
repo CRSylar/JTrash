@@ -6,6 +6,9 @@ import Model.Profile;
 
 import java.io.IOException;
 
+/**
+ * Classe che contiene SOLAMENTE metodi statici di utilità generale
+ */
 public class Utils {
 
     /**

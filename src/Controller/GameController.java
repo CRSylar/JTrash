@@ -10,6 +10,7 @@ import View.GameManager;
 import View.Sounds;
 import View.StartingScreen;
 
+import javax.management.InvalidAttributeValueException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseListener;
@@ -81,7 +82,7 @@ public class GameController {
                 view.resetTable();
             }
             System.out.println("Game won by Player "+ (model.getWinner()) );
-            // TODO - animazione che annuncia il vincitore + salvataggio risultato
+            // TODO - animazione che annuncia il vincitore
             Sounds.getInstance().play("assets/sounds/player-wins.wav", false);
             disposeGame(model.getWinner());
         });
@@ -90,9 +91,13 @@ public class GameController {
     }
 
     private void disposeGame(int winner) {
-        StartingScreen sc = new StartingScreen(true);
-        StartingScreenController ssc = new StartingScreenController(sc, new GameResult(winner));
-        view.dispose();
+        try {
+            StartingScreen sc = new StartingScreen(true);
+            MainMenuController ssc = new MainMenuController(sc, new GameResult(winner));
+            view.dispose();
+        } catch (InvalidAttributeValueException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
