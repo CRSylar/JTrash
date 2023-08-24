@@ -4,7 +4,11 @@ import Utilities.Pair;
 
 import java.util.Observable;
 
-
+/**
+ * Estende Observable, questa classe di occupa di gestire l'interezza del modello.
+ * Allora le risorse necessarie, notifica gli Observer, interagisce con le interfacce
+ * pubbliche degli altri elementi del Model
+ */
 @SuppressWarnings("deprecation")
 public class ModelManager extends Observable {
 

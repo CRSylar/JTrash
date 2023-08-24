@@ -3,14 +3,34 @@ package View;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Frame iniziale della UI, lancia l'animazione iniziale,
+ * contiene il MenuPanel
+ */
 public class StartingScreen  extends JFrame {
 
+    /**
+     * Bottoni per UI del menu principale
+     */
     JButton profile,exit, twoPlayers, threePlayers, fourPlayers;
+    /**
+     * JWindow utilizzata per gestire la splash screen iniziale
+     */
     JWindow win = new JWindow();
 
+    /**
+     * Costruisce un Frame saltando l'animazione iniziale
+     * o splash screen
+     */
     public StartingScreen() {
         this(false);
     }
+
+    /**
+     * Costruisce un Frame, eventualmente mostrando prima
+     * la splash screen iniziale
+     * @param backToMenu flag che attiva o disattiva il lancio della splash screen
+     */
     public StartingScreen(boolean backToMenu) {
         if (!backToMenu)
             displaySplashScreen(win);
@@ -22,6 +42,11 @@ public class StartingScreen  extends JFrame {
 
     }
 
+    /**
+     * Mostra una finestra di dialogo che obbliga il giocatore a creare un profilo
+     * inserendo un nome valido (qualsiasi sequenza di caratteri piu lunga di 3)
+     * @return il nome da utilizzare per la creazione del profilo
+     */
     public String showProfileCreationDialog() {
         String name = "";
         while (name.length() < 3) {
@@ -39,6 +64,12 @@ public class StartingScreen  extends JFrame {
         return name;
     }
 
+    /**
+     * Istanzia e fa il setup del MenuPanel
+     * aggiungendo i bottoni per la UX.
+     * Crea un frame 800x600 con titolo JTrash Menu
+     * al centro dello schermo
+     */
     private void displayMenuScreen() {
         setTitle("JTrash Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,6 +114,12 @@ public class StartingScreen  extends JFrame {
         add(contentPanel);
     }
 
+    /**
+     * Mostra per 5secondi una splash screen animata.
+     * Dimensione della splash screen 800x600
+     * al centro dello schermo
+     * @param win da utilizzare
+     */
     private void displaySplashScreen(JWindow win) {
         win.setSize(800,600);
         win.setLocationRelativeTo(null);
@@ -92,15 +129,37 @@ public class StartingScreen  extends JFrame {
             splashImage.setIcon(img);
             win.getContentPane().add(splashImage);
             win.setVisible(true);
-            Thread.sleep(100); // TODO reset to 5000
-        } catch (Exception e) {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            System.out.println("Can't make the splash screen sit for 5 second, interrupted");
             e.printStackTrace();
         }
     }
 
+    /**
+     *
+     * @return bottone del Profilo
+     */
     public JButton getProfileButton () {return profile;}
+
+    /**
+     *
+     * @return bottone Exit
+     */
     public JButton getExitButton () {return exit;}
+    /**
+     *
+     * @return il bottone che fa iniziare una partita a due giocatori
+     */
     public JButton getTwoPlayersButton () {return twoPlayers;}
+    /**
+     *
+     * @return il bottone che fa iniziare una partita a tre giocatori
+     */
     public JButton getThreePlayersButton () {return threePlayers;}
+    /**
+     *
+     * @return il bottone che fa iniziare una partita a quattro giocatori
+     */
     public JButton getFourPlayersButton () {return fourPlayers;}
 }

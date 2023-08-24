@@ -8,10 +8,27 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+/**
+ * Pannello che rappresenta il menu iniziale e Hub centrale del gioco.
+ * Da qui è possibile iniziare una partita con 2/3/4 giocatori,
+ * visualizzare i dati del profilo e modificare l'avatar
+ * uscire dal gioco
+ */
 public class MenuPanel extends JPanel {
+    /**
+     * Immagine di Background del pannello
+     */
     BufferedImage bgImage;
+    /**
+     * Titolo del gioco da disegnare nel pannello
+     */
     JLabel title;
 
+    /**
+     * Costruisce un'istanza di Menu
+     * impostando il titolo, il font, il layoutManager
+     * e posizionando il background
+     */
     public MenuPanel() {
         setLayout(new GridBagLayout());
         title = new JLabel("JTrash");
@@ -34,6 +51,10 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    /**
+     *
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
