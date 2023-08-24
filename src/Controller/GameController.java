@@ -72,6 +72,7 @@ public class GameController {
         model.addObserver(view);
         view.setVisible(true);
 
+
     }
 
     /**
@@ -115,13 +116,57 @@ public class GameController {
 
                 view.resetTable();
             }
-            System.out.println("Game won by Player "+ (model.getWinner()) );
-            // TODO - animazione che annuncia il vincitore
-            Sounds.getInstance().play(Sounds.CLIPTYPE.PLAYERWIN, false);
-
-            disposeGame(model.getWinner());
+            displayEndGameDialogueAndDispose(model.getWinner());
         });
         gameThread.start();
+
+    }
+
+    /**
+     * Mostra per 3.5 secondi il dialogue che informa il giocatore sull'esito della partita
+     * in caso di vittoria riproduce anche una traccia audio
+     * @param winner il giocatore che ha vinto la partita appena terminata, utilizzato per costruire
+     *               un GameResult
+     */
+    private void displayEndGameDialogueAndDispose(int winner) {
+        try {
+            GameResult gr = new GameResult(winner);
+            if (gr.getResult() == GameResult.RESULT.WIN) {
+                Sounds.getInstance().play(Sounds.CLIPTYPE.PLAYERWIN, false);
+                // Show 3.5 seconds of win screen
+                showMessageDialogue("assets/you_win.gif");
+
+            }
+            else
+                showMessageDialogue("assets/you_lose.png");
+            disposeGame(gr);
+        } catch (InvalidAttributeValueException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Crea e mostra una finestra contenente la stringa ricevuta per 3.5secondi
+     * poi fa il dispose della finestra creata in autonomia.
+     * L'utilizzo previsto richiede che la stringa sia il path a una risorsa immagine (png/gif/etc...)
+     * @param s il path alla risorsa da visualizzare
+     */
+    private void showMessageDialogue(String s) {
+        JWindow w = new JWindow();
+        w.setSize(400, 200);
+        w.setLocationRelativeTo(null);
+        try {
+            ImageIcon img = new ImageIcon(s);
+            JLabel label = new JLabel(img);
+            w.getContentPane().add(label);
+            w.setVisible(true);
+            Thread.sleep(3500);
+            w.setVisible(false);
+            w.dispose();
+        } catch (InterruptedException e ) {
+            System.out.println("Can't make the GameResult screen sit for 3.5 second, interrupted");
+            e.printStackTrace();
+        }
 
     }
 
@@ -129,16 +174,12 @@ public class GameController {
      * Distrugge la View attuale (quella che mostra la partita in corso)
      * e istanzia un nuovo controller per tornare al menu principale
      * passandogli il vincitore del game attuale
-     * @param winner il player che ha vinto la partita attuale
+     * @param result il risultato del player umano della partita attuale (win/loss/draw)
      */
-    private void disposeGame(int winner) {
-        try {
-            StartingScreen sc = new StartingScreen(true);
-            MainMenuController ssc = new MainMenuController(sc, new GameResult(winner));
-            view.dispose();
-        } catch (InvalidAttributeValueException e) {
-            throw new RuntimeException(e);
-        }
+    private void disposeGame(GameResult result) {
+        StartingScreen sc = new StartingScreen(true);
+        MainMenuController ssc = new MainMenuController(sc, result);
+        view.dispose();
     }
 
     /**
