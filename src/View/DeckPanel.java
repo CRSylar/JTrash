@@ -3,6 +3,12 @@ package View;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * JPanel che rappresenta il Mazzo di carte, è composto da
+ * due Label sovrapposte, la prima mostra un immagine di "Mazzo vuoto"
+ * mentre la seconda il mazzo vero e proprio.
+ *
+ */
 public class DeckPanel extends JPanel {
     public DeckPanel() {
         setPreferredSize(new Dimension(78, 114));
@@ -16,7 +22,6 @@ public class DeckPanel extends JPanel {
         // Flipping per mostrare la carta piu "in alto" nello stack
         CardLayout cl = (CardLayout)getLayout();
         cl.last(this);
-        //
         setBackground(Color.WHITE);
     }
 }

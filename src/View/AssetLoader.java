@@ -54,11 +54,13 @@ public class AssetLoader {
      */
     private BufferedImage RedJolly;
 
+    /**
+     * Lista di avatar disponibili
+     */
     private List<Pair<Integer, BufferedImage>> avatars = new ArrayList<>();
 
     /**
      * Costruttore PRIVATO, carica gli tutti gli asset nei relativi membri
-     * @throws IOException in caso non sia possibile leggere correttamente uno degli asset
      */
     private AssetLoader() {
         try {
@@ -79,7 +81,7 @@ public class AssetLoader {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,6 +117,10 @@ public class AssetLoader {
      */
     public BufferedImage getEmptyPile() {return emptyPile;}
 
+    /**
+     *
+     * @return Gli avatar disponibili (in sola lettura)
+     */
     public List<Pair<Integer, BufferedImage>> getAvatars() {
         return this.avatars;
     }
@@ -151,6 +157,11 @@ public class AssetLoader {
         return out;
     }
 
+    /**
+     * Riceve l'immagine di una carta e ritorna un Immagine Ruotata di 90gradi
+     * @param card l'immagine della carta da ruotare
+     * @return l'immagine ruotata di 90gradi
+     */
     public BufferedImage getRotatedCard(BufferedImage card) {
         int w = card.getWidth();
         int h = card.getHeight();

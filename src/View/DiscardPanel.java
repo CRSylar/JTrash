@@ -3,9 +3,20 @@ package View;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * JPanel che rappresenta la pila degli scarti ed è gestito
+ * da un CardLayout per creare un vero e proprio "stack" di carte.
+ */
 public class DiscardPanel extends JPanel {
-
+    /**
+     * Il CardLayout da utilizzare
+     */
     private final CardLayout cl;
+
+    /**
+     * Costruisce la pila degli scarti, che inizialmente
+     * contiene solo una Jlabel che mostra che la pila è vuota
+     */
     public DiscardPanel() {
         JLabel discardLabel = new JLabel();
         setLayout(new CardLayout());
@@ -16,6 +27,11 @@ public class DiscardPanel extends JPanel {
         setBackground(Color.WHITE);
     }
 
+    /**
+     * Aggiunge il componente al Panel e flippa la lista per mostrare l'ultima carta inserita (questa)
+     * @param comp   the component to be added
+     * @return the added component
+     */
     @Override
     public Component add(Component comp) {
         super.add(comp);
@@ -24,6 +40,9 @@ public class DiscardPanel extends JPanel {
         return comp;
     }
 
+    /**
+     * Rimuove la carta in cima alla pila degli scarti
+     */
     public void removeTop() {
         int i = getComponentCount();
         remove(i-1);
@@ -31,6 +50,9 @@ public class DiscardPanel extends JPanel {
         cl.last(this);
     }
 
+    /**
+     * Svuota il Panello e lo reimposta
+     */
     public void resetPanel() {
         removeAll();
         add(new JLabel(new ImageIcon(AssetLoader.getInstance().getEmptyPile())));

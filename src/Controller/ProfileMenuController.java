@@ -78,7 +78,6 @@ public class ProfileMenuController {
                 .map (avatarIcon -> pm.iconToButton(avatarIcon, pane))
                 .toList();
 
-
         int newPic = AvatarsOptionDialogue.show(
                 pm,
                 pane,
