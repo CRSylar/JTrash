@@ -86,7 +86,7 @@ public class GameController {
             // preparazione turno, model e view vengono resettate e preparate
             Player[] players = model.getPlayers();
             while (true) {
-                Sounds.getInstance().play("assets/sounds/deck-shuffle.wav", false);
+                Sounds.getInstance().play(Sounds.CLIPTYPE.SHUFFLE, false);
                 openingHandsLatch = new CountDownLatch(model.getNumberOfPlayers());
                 // mischio il mazzo
                 model.getDeck().shuffle();
@@ -117,7 +117,8 @@ public class GameController {
             }
             System.out.println("Game won by Player "+ (model.getWinner()) );
             // TODO - animazione che annuncia il vincitore
-            Sounds.getInstance().play("assets/sounds/player-wins.wav", false);
+            Sounds.getInstance().play(Sounds.CLIPTYPE.PLAYERWIN, false);
+
             disposeGame(model.getWinner());
         });
         gameThread.start();
@@ -178,6 +179,7 @@ public class GameController {
 
             if (model.getPlayers()[playerTurn].hand.handFullyVisible()) {
                 model.setPlayersThatGetOneCardLessNextRound(playerTurn);
+                Sounds.getInstance().play(Sounds.CLIPTYPE.TRASH, false);
                 // ulteriore controllo per evitare loop infiniti nei casi limite in cui
                 // in una partita a due un giocatore fa Trash e al giro successivo
                 // fa Trash anche l'altro (playerTrashed si sarebbe aggiornato all' infinito)

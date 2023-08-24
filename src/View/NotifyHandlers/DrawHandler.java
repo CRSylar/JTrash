@@ -46,7 +46,7 @@ public class DrawHandler implements NotifiyHandler {
                         new ImageIcon(img)
                 )
         );
-        Sounds.getInstance().play("assets/sounds/flipcard.wav", false);
+        Sounds.getInstance().play(Sounds.CLIPTYPE.DRAW, false);
         drawnCardPanel.setVisible(true);
     }
 }

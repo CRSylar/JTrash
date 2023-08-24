@@ -44,7 +44,7 @@ public class MainMenuController {
             updatePlayerScore(lastGame.getResult());
 
         initListeners();
-        Sounds.getInstance().stop();
+        Sounds.getInstance().stop(Sounds.CLIPTYPE.LOUNGE);
     }
 
     /**
@@ -83,7 +83,7 @@ public class MainMenuController {
         System.out.println("Starting with "+players);
         // inserire qui nuova Schermata
         GameController gm = new GameController(players);
-        Sounds.getInstance().play("assets/sounds/ambient.wav", true);
+        Sounds.getInstance().play(Sounds.CLIPTYPE.LOUNGE, true);
         // Cheat locker - all'inizio della partita aggiorno gia il profilo aggiungendo una
         // partita giocata, di default con stato PERSA, verrà poi aggiornata col il vero
         // risultato a partita finita, questo evita che si chiuda il gioco per evitare una sconfitta

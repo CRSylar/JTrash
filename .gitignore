@@ -26,6 +26,6 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Storie
+.DS_Store
 ### Intellj ###
 .idea/

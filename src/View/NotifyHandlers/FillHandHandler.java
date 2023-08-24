@@ -47,6 +47,6 @@ public class FillHandHandler implements NotifiyHandler {
         playerPanel.setVisible(false);
         playerPanel.add(new Card(rotated));
         playerPanel.setVisible(true);
-        Sounds.getInstance().play("assets/sounds/flipcard.wav", false);
+        Sounds.getInstance().play(Sounds.CLIPTYPE.DRAW, false);
     }
 }

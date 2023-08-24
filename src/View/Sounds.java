@@ -3,6 +3,8 @@ package View;
 import javax.sound.sampled.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Singleton che gestisce la riproduzione di suoni,
@@ -15,10 +17,15 @@ public class Sounds {
     private static Sounds instance;
 
     /**
-     * Le clip eseguite, mi serve per stoppare successivamente tutte quelle che sono ancora
-     * in esecuzione
+     * TreeMap contente le Clip utilizzate durante il runTime.
+     * Ottimizza la lettura dei file sorgente facendolo una sola volta allo startup
      */
-    ArrayList<Clip> clips;
+    Map<CLIPTYPE, Clip> clipMap;
+
+    /**
+     *
+     * @return L'istanza del Singleton Sound
+     */
     public static Sounds getInstance() {
         if (instance == null)
             instance = new Sounds();
@@ -26,42 +33,64 @@ public class Sounds {
     }
 
     /**
+     * Enumerazione che definisce dei "tag" per la riproduzione delle clip.
+     * Questi vengono utilizzati dalla classe Sound come chiavi della TreeMap interna
+     * garantendo un rapido accesso alla struttura dati
+     */
+    public enum CLIPTYPE {
+        PLAYERWIN,
+        DRAW,
+        SHUFFLE,
+        TRASH,
+        LOUNGE;
+    }
+    /**
      * Costruttore privato
      */
     private Sounds() {
-        clips = new ArrayList<>();
-    }
-
-    /**
-     * Apre e riproduce un file Audio non compresso
-     * @param filename la path al file da riprodurre
-     * @param loop se riprodurre in loop o no
-     */
-    public void play(String filename,boolean loop) {
         try {
-            AudioInputStream aIs = AudioSystem.getAudioInputStream(new File(filename));
-            Clip clip = AudioSystem.getClip();
-            clip.open(aIs);
+            clipMap = new TreeMap<>();
+            Clip playerWClip = AudioSystem.getClip();
+            playerWClip.open(AudioSystem.getAudioInputStream(new File("assets/sounds/player-wins.wav")));
+            Clip ambientClip = AudioSystem.getClip();
+            ambientClip.open(AudioSystem.getAudioInputStream(new File("assets/sounds/ambient.wav")));
+            Clip shuffleClip = AudioSystem.getClip();
+            shuffleClip.open(AudioSystem.getAudioInputStream(new File("assets/sounds/deck-shuffle.wav")));
+            Clip drawCardClip = AudioSystem.getClip();
+            drawCardClip.open(AudioSystem.getAudioInputStream(new File("assets/sounds/flipcard.wav")));
+            Clip trashClip = AudioSystem.getClip();
+            trashClip.open(AudioSystem.getAudioInputStream(new File("assets/sounds/trash.wav")));
 
-            clip.start();
-            if (loop)
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            clips.add(clip);
-        }
-        catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
+            clipMap.put(CLIPTYPE.PLAYERWIN, playerWClip);
+            clipMap.put(CLIPTYPE.DRAW, drawCardClip);
+            clipMap.put(CLIPTYPE.SHUFFLE, shuffleClip);
+            clipMap.put(CLIPTYPE.LOUNGE, ambientClip);
+            clipMap.put(CLIPTYPE.TRASH, trashClip);
+        } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+
     /**
-     * Stoppa tutte le clip ancora in esecuzione
-     * e svuota l'array delle clip
+     * Riproduce una traccia audio dall'inizio, con possibilità di impostare una riproduzione in loop
+     * @param cliptype il tipo di clip come definito da Enumerazione
+     * @param loop riproduzione in loop si/no
      */
-    public void stop() {
-        for (Clip c : clips) {
-            if (c != null && c.isRunning())
-                c.stop();
-        }
-        clips.clear();
+    public void play(CLIPTYPE cliptype, boolean loop) {
+        Clip c = clipMap.get(cliptype);
+        c.setMicrosecondPosition(0);
+        c.start();
+        if (loop)
+            c.loop(Clip.LOOP_CONTINUOUSLY);
+    }
+
+
+    /**
+     * Stoppa la traccia audio relativa al tipo passato
+     * @param cliptype il tipo di clip come definito da Enumerazione
+     */
+    public void stop(CLIPTYPE cliptype) {
+        clipMap.get(cliptype).stop();
     }
 }
