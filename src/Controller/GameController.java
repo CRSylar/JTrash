@@ -17,19 +17,53 @@ import java.awt.event.MouseListener;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * Controller che gestisce la finestra della partita,
+ * coordinando Model e View con il pattern OO
+ * e sincronizzandoli utilizzando dei CountDownLatch
+ */
 public class GameController {
 
+    /**
+     * Istanza del modello, un Observable
+     */
     private final ModelManager model;
+    /**
+     * Istanza della View, un Observer
+     */
     private final GameManager view;
 
-    // Latch usato solo per il giocatore "Umano" per disattivare i listener
+    /**
+     * Latch usato solo per il giocatore "Umano" per disattivare i listener
+     * dei "Bottoni" per pescare le carte da Mazzo e Scarti
+     */
     CountDownLatch p0Latch = new CountDownLatch(1);
-    // Latch principale che permette di sincronizzare tutto
+    /**
+     * Latch principale che permette di mantenere
+     * sincronizzati View e Model durante il turno di
+     * un giocatore (umano o CPU)
+     */
     CountDownLatch mainLatch = new CountDownLatch(1);
+    /**
+     * MouseListener in ascolto del click sui componenti
+     * della View (da parte del giocatore umano)
+     */
     MyMouseListener ms = new MyMouseListener(this);
 
-    CountDownLatch l;
+    /**
+     * Latch che tiene sincronizzati View e Model
+     * durante la fase di "dare carte" ai giocatori
+     * che altrimenti inizierebbero a giocare prima di
+     * aver ricevuto tutte le carte in mano
+     */
+    CountDownLatch openingHandsLatch;
 
+    /**
+     * Costruisce un Controller e prepara Model e View per
+     * la partita che sta per iniziare, riceve il numero di giocatori
+     * che partecipano alla partita
+     * @param players il numero di giocatori per la partita da impostare
+     */
     public GameController(int players) {
         // create the ModelManager
         model = new ModelManager(players);
@@ -53,7 +87,7 @@ public class GameController {
             Player[] players = model.getPlayers();
             while (true) {
                 Sounds.getInstance().play("assets/sounds/deck-shuffle.wav", false);
-                l = new CountDownLatch(model.getNumberOfPlayers());
+                openingHandsLatch = new CountDownLatch(model.getNumberOfPlayers());
                 // mischio il mazzo
                 model.getDeck().shuffle();
                 // svuoto la pila degli scarti
@@ -73,7 +107,7 @@ public class GameController {
                     break;
                 // svolgimento turno vero e proprio
                 try {
-                    l.await();
+                    openingHandsLatch.await();
                     playTurn(model.getNumberOfPlayers());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
@@ -90,6 +124,12 @@ public class GameController {
 
     }
 
+    /**
+     * Distrugge la View attuale (quella che mostra la partita in corso)
+     * e istanzia un nuovo controller per tornare al menu principale
+     * passandogli il vincitore del game attuale
+     * @param winner il player che ha vinto la partita attuale
+     */
     private void disposeGame(int winner) {
         try {
             StartingScreen sc = new StartingScreen(true);
@@ -105,7 +145,7 @@ public class GameController {
      * Ogni giocatore (tranne il primo) puo pescare dal mazzo o dagli scarti.
      * Quando un giocatore fa Trash viene effettuato un "ultimo giro" fino a tornare
      * al giocatore in questione, gli eventuali Trash degli altri giocatori vengono
-     * registrati nell'array playersThatGetOneCardLessNextRound
+     * registrati nell' array playersThatGetOneCardLessNextRound
      */
     private void playTurn(int numberOfPlayers) throws InterruptedException {
         model.resetPlayersThatGetOneCardLessNextRound();
@@ -155,6 +195,10 @@ public class GameController {
         }
     }
 
+    /**
+     * Esegue il turno di un giocatore gestito dalla CPU
+     * @param playerTurn il giocatore di cui eseguire il turno
+     */
     private void executeCpuTurn(int playerTurn){
         // Se ci sono scarti faccio il Peek della cima, se è una carta con un valore che a me manca me la prendo
         // I casi speciali (Jolly e carte Jolly) sono sempre presi
@@ -164,12 +208,25 @@ public class GameController {
             drawFromDeck(playerTurn);
     }
 
+    /**
+     * Esegue il turno del giocatore "Umano"
+     * riceve il mouseListener per gestire i click dell'utente sulla UI
+     * @param ms il mouseListener
+     */
     private void executePlayerTurn(MouseListener ms) {
         // setting up the listeners
         view.getDeckPanel().addMouseListener(ms);
         view.getDiscardPanel().addMouseListener(ms);
     }
 
+    /**
+     * Aggiunge una carta alla mano del giocatore
+     * questo "evento" viene eseguito dopo un Timer di 550ms,
+     * il che consente di creare l'animazione della pescata
+     * sulla View, quando termina il Timer viene fatto il countDown
+     * del latch openingHandsLatch
+     * @param player il giocatore alla cui mano aggiungere una carta
+     */
     private void fillPlayerHand(Player player) {
 
         new Timer(550, e -> {
@@ -178,11 +235,17 @@ public class GameController {
             } else {
                 Timer self = (Timer) e.getSource();
                 self.stop();
-                l.countDown();
+                openingHandsLatch.countDown();
             }
         }).start();
     }
 
+    /**
+     * Pesca una carta dal Deck, o se il deck è vuoto
+     * la pesca dal fondo della pila degli scarti
+     * e la assegna al giocatore di turno
+     * @param playerTurn il giocatore di turno
+     */
     public void drawFromDeck(int playerTurn) {
         // se le carte nel mazzo sono finite vengono usate
         // quelle nella pila degli scarti, messe al contrario
@@ -195,20 +258,43 @@ public class GameController {
             // Draw from deck si occupa di notificare la view
             subsequentDraws(playerTurn, model.getDeck().drawCard());
         }
+        // se è il turno del giocatore umano devo sbloccare il suo latch
+        // per rimuovere i listener dai bottoni
         if (playerTurn == 0)
             p0Latch.countDown();
     }
 
+    /**
+     * Pesca una carta dalla pila degli scarti
+     * e la assegna al giocatore di turno
+     * @param playerTurn il giocatore di turno
+     */
     public void drawFromDiscard(int playerTurn) {
         if (model.getDiscardPile().size() == 0)
             throw new IllegalStateException("Discard pile is empty");
         //System.out.println("Drawing from the discard");
         view.getDiscardPanel().removeTop();
         subsequentDraws(playerTurn, model.getDiscardPile().drawFromPile());
+        // se è il turno del giocatore umano devo sbloccare il suo latch
+        // per rimuovere i listener dai bottoni
         if (playerTurn == 0)
             p0Latch.countDown();
     }
 
+    /**
+     * Gestisce le pescate successive alla prima.
+     * Chiede al Model di computare la carta pescata
+     * e fa una chiamata RICORSIVA se la carta è stata giocata
+     * passando la nuova carta nella ricorsione.
+     * Per creare l' effetto di pescata sulla View
+     * il tutto viene gestito da un Timer, che esegue la logica
+     * descritta sopra dopo 1,2secondi.
+     * Quando la carta ricevuta non è giocabile
+     * viene fatto il countDown del mainLatch per
+     * passare al giocatore successivo
+     * @param playerTurn il giocatore di turno
+     * @param card la carta pescata (o scambiata nelle chiamate ricorsive)
+     */
     private void subsequentDraws(int playerTurn, Card card) {
         model.notifyDraw(card);
         new Timer(1200, e -> {

@@ -97,10 +97,10 @@ public class Profile implements Serializable {
     public static Profile getProfile() {return ProfileSingleton.instance;}
 
     /**
-     * Controlla che esista un istanza di Profilo caricato (in situazioni "normali" ciò è sempre vero)
+     * Verifica lo stato di caricamento del profilo, torna True se Profile == null
      * @return booleano
      */
-    public static boolean isProfileLoaded() {return ProfileSingleton.instance == null;}
+    public static boolean isProfileNotLoaded() {return ProfileSingleton.instance == null;}
 
     /**
      * Carica un profilo, utilizzato per caricare un profilo alla lettura del file

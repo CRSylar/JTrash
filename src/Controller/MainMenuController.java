@@ -33,15 +33,15 @@ public class MainMenuController {
      * @param lastGame il risultato della partita
      */
     public MainMenuController(StartingScreen startingScreen, GameResult lastGame) {
-        if (lastGame != null)
-            updatePlayerScore(lastGame.getResult());
         this.startingScreen = startingScreen;
 
-        if (Profile.isProfileLoaded()) {
+        if (Profile.isProfileNotLoaded()) {
            String name = this.startingScreen.showProfileCreationDialog();
            Profile.createNewProfile(name);
            Utils.save();
         }
+        if (lastGame != null)
+            updatePlayerScore(lastGame.getResult());
 
         initListeners();
         Sounds.getInstance().stop();
@@ -84,6 +84,10 @@ public class MainMenuController {
         // inserire qui nuova Schermata
         GameController gm = new GameController(players);
         Sounds.getInstance().play("assets/sounds/ambient.wav", true);
+        // Cheat locker - all'inizio della partita aggiorno gia il profilo aggiungendo una
+        // partita giocata, di default con stato PERSA, verrà poi aggiornata col il vero
+        // risultato a partita finita, questo evita che si chiuda il gioco per evitare una sconfitta
+        updatePlayerScore(GameResult.RESULT.LOSS);
         gm.start();
         // dispose chiude la schermo attuale, lasciando attivo quello creato
         // da GameController
