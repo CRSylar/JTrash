@@ -10,6 +10,12 @@ import java.awt.*;
  *
  */
 public class DeckPanel extends JPanel {
+    /**
+     * Costruisce il Pannello che ospiterà il mazzo di carte
+     * impostandone le dimensioni e il layoutManager,
+     * dopo di che aggiunge le Icone del mazzo e della pila vuota
+     * al componente
+     */
     public DeckPanel() {
         setPreferredSize(new Dimension(78, 114));
         setLayout(new CardLayout());

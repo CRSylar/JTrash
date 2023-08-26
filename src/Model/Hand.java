@@ -115,6 +115,7 @@ public class Hand {
      * Guarda la carta dalla mano del giocatore a una precisa posizione,
      * NOTA la carta non viene rimossa dalla mano!
      * @param position la posizione nella mano della carta da rimuovere
+     * @return la carta nella posizione richiesta
      * @throws ArrayIndexOutOfBoundsException in caso la posizione non sia valida
      */
     public Card getCard(int position) {

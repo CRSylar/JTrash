@@ -55,9 +55,22 @@ public class Notification {
      * NOTA. NON vengono gestiti altri tipi di notifica
      */
     public enum TYPES {
+        /**
+         * È stata Aggiunta una carta alla mano del giocatore (COPERTA)
+         * direttamente, senza passare dal pannello della pescata
+         */
         FILLHAND,
+        /**
+         * Una carta è stata pescata e/o aggiunta al pannello delle pescate
+         */
         DRAW,
+        /**
+         * Una carta SCOPERTA è stata aggiunta alla mano del giocatore
+         */
         HAND,
+        /**
+         * Una carta è stata scartata, ovvero aggiunta alla pila degli scarti
+         */
         DISCARD
     }
 }

@@ -21,6 +21,7 @@ public class Player {
     public Hand hand;
     /**
      * Costruisce un player, e gli assegna una mano che conterrà 10 carte (il massimo)
+     * @param id l'identificativo del player
      */
     public Player(int id) {
         this.id = id;
@@ -30,6 +31,7 @@ public class Player {
     /**
      * Costruisce un player definendo la dimensione massima della mano,
      * da utilizzare nei turni successivi al primo (di ogni game)
+     * @param id l'identificativo del player
      * @param maxHandSize dimensione massima della mano
      */
     public Player(int id, int maxHandSize) {

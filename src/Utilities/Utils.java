@@ -48,6 +48,9 @@ public class Utils {
         return cardValue > handSize;
     }
 
+    /**
+     * Salva i dati del profilo utente sul file
+     */
     public static void save() {
         try {
             FileWriterReader.getInstance().Write(Profile.getProfile());
@@ -55,6 +58,10 @@ public class Utils {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Apre il file del profilo e lo legge, se è presente lo carica anche
+     */
     public static void readFileAndLoadProfile() {
         try {
             Profile p = FileWriterReader.getInstance().Read();

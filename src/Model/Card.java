@@ -14,9 +14,21 @@ public class Card {
      * Fiori.
      */
     public enum SUITS {
+        /**
+         * Picche
+         */
         SPADES,
+        /**
+         * Cuori
+         */
         HEARTS,
+        /**
+         * Quadri
+         */
         DIAMONDS,
+        /**
+         * Fiori
+         */
         CLUBS
     }
 
@@ -110,7 +122,17 @@ public class Card {
         return s+this.suit;
     }
 
+    /**
+     *
+     * @return se la carta è coperta o scoperta
+     */
     public boolean isHide() { return isHided;}
+
+    /**
+     * Imposta stato "Visibilità" della carta
+     * ovvero coperta o scoperta
+     * @param state il nuovo stato da settare
+     */
     public void setHided(boolean state) { this.isHided = state;}
 
 }

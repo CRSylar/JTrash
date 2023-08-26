@@ -188,6 +188,8 @@ public class GameController {
      * Quando un giocatore fa Trash viene effettuato un "ultimo giro" fino a tornare
      * al giocatore in questione, gli eventuali Trash degli altri giocatori vengono
      * registrati nell' array playersThatGetOneCardLessNextRound
+     * @param numberOfPlayers il giocatore di turno
+     * @throws InterruptedException lancia eccezioni relative alla gestione dello sleep del Thread
      */
     private void playTurn(int numberOfPlayers) throws InterruptedException {
         model.resetPlayersThatGetOneCardLessNextRound();

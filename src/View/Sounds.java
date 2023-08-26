@@ -38,10 +38,25 @@ public class Sounds {
      * garantendo un rapido accesso alla struttura dati
      */
     public enum CLIPTYPE {
+        /**
+         * File audio player-wins.wav
+         */
         PLAYERWIN,
+        /**
+         * File audio flipcard.wav
+         */
         DRAW,
+        /**
+         * File audio deck-shuffle.wav
+         */
         SHUFFLE,
+        /**
+         * File audio Trash.wav
+         */
         TRASH,
+        /**
+         * File audio ambient.wav
+         */
         LOUNGE;
     }
     /**

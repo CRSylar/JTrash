@@ -87,7 +87,7 @@ public class MainMenuController {
         // Cheat locker - all'inizio della partita aggiorno gia il profilo aggiungendo una
         // partita giocata, di default con stato PERSA, verrà poi aggiornata col il vero
         // risultato a partita finita, questo evita che si chiuda il gioco per evitare una sconfitta
-        updatePlayerScore(GameResult.RESULT.LOSS);
+        // updatePlayerScore(GameResult.RESULT.LOSS); - causa ovviamente doppio conteggio partite giocate
         gm.start();
         // dispose chiude la schermo attuale, lasciando attivo quello creato
         // da GameController

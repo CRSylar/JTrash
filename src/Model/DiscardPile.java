@@ -45,6 +45,11 @@ public class DiscardPile {
         return pile.pop();
     }
 
+    /**
+     * Pesca una carta dal punto richiesto
+     * @param index il punto nella pila degli scarti da cui pescare la carta
+     * @return la Carta pescata
+     */
     public Card drawFromIndex(int index) {
         return pile.get(index);
     }

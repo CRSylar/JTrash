@@ -10,6 +10,10 @@ import java.awt.event.MouseEvent;
  */
 public class MyMouseListener extends MouseAdapter {
 
+    /**
+     * L'istanza del controller del quale chiamare i metodi
+     * quando si registra l'evento sul mouse
+     */
     private final GameController gameController;
 
     /**

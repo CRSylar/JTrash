@@ -12,9 +12,19 @@ import java.io.*;
  */
 public class FileWriterReader {
 
+    /**
+     * Costruttore privato, viene utilizzato dalla classe Singleton per
+     * creare l'istanza una sola volta
+     */
     private FileWriterReader() {}
 
+    /**
+     * Classe che ospita l'istanza di FileWriterReader rendendolo un Singleton
+     */
     private static class WriterReaderSingleton {
+        /**
+         * L'istanza "fisica" del singleton
+         */
         private static final FileWriterReader instance = new FileWriterReader();
     }
 

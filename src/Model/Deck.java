@@ -83,6 +83,9 @@ public class Deck {
         shuffle();
     }
 
-
+    /**
+     *
+     * @return istanza del mazzo in uso
+     */
     public ArrayList<Card> getDeck() { return deck;}
 }

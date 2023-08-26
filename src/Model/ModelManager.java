@@ -122,7 +122,7 @@ public class ModelManager extends Observable {
      * Gioca una carta, e ritorna un Pair formato da una carta e lo stato (ovvero la nuova carta e se è giocabile o meno)
      * @param playerTurn il giocatore il cui turno computare
      * @param card la carta che è stata pescata
-     * @return Pair<Card, Boolean> contenente la nuova carta e la giocabilità della stessa
+     * @return Pair(Card, Boolean) contenente la nuova carta e la giocabilità della stessa
      * (se il valore Right è true -> Left è uguale alla carta passata, quindi da scartare,
      * se è false -> Left è una nuova carta, da controllare)
      */
