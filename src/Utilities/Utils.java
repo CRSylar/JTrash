@@ -53,7 +53,7 @@ public class Utils {
      */
     public static void save() {
         try {
-            FileWriterReader.getInstance().Write(Profile.getProfile());
+            FileWriterReader.Write(Profile.getProfile());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +64,7 @@ public class Utils {
      */
     public static void readFileAndLoadProfile() {
         try {
-            Profile p = FileWriterReader.getInstance().Read();
+            Profile p = FileWriterReader.Read();
             Profile.loadProfile(p);
         } catch (IOException e) {
             e.printStackTrace();

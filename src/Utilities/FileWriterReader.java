@@ -13,33 +13,11 @@ import java.io.*;
 public class FileWriterReader {
 
     /**
-     * Costruttore privato, viene utilizzato dalla classe Singleton per
-     * creare l'istanza una sola volta
-     */
-    private FileWriterReader() {}
-
-    /**
-     * Classe che ospita l'istanza di FileWriterReader rendendolo un Singleton
-     */
-    private static class WriterReaderSingleton {
-        /**
-         * L'istanza "fisica" del singleton
-         */
-        private static final FileWriterReader instance = new FileWriterReader();
-    }
-
-    /**
-     * Ritorna l'istanza di FileWriterReader
-     * @return FileWriteReader instance
-     */
-    public static FileWriterReader getInstance() {return WriterReaderSingleton.instance;}
-
-    /**
      * Metodo che si occupa di creare un FileOutputStream e l'ObjectOutputStream, necessari per scrivere il file
      * @param profile le informazioni da salvare, ovvero il profilo del giocatore
      * @throws IOException lancia eccezioni in caso non sia possibile scrivere il file.
      */
-    public void Write(Profile profile) throws IOException {
+    public static void Write(Profile profile) throws IOException {
         FileOutputStream f = new FileOutputStream("savedGames.dat");
         ObjectOutputStream o = new ObjectOutputStream(f);
 
@@ -57,7 +35,7 @@ public class FileWriterReader {
      * @throws ClassNotFoundException lancia questa eccezione in caso il file sia stato corrotto
      * e/o non sia stato possibile deserializzare le informazioni come Profile
      */
-    public Profile Read() throws IOException, ClassNotFoundException {
+    public static Profile Read() throws IOException, ClassNotFoundException {
         try {
             FileInputStream fi = new FileInputStream("savedGames.dat");
             ObjectInputStream oi = new ObjectInputStream(fi);

@@ -29,3 +29,6 @@ bin/
 .DS_Store
 ### Intellj ###
 .idea/
+
+### Zipped repo ###
+*.zip
