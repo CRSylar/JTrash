@@ -30,5 +30,8 @@ bin/
 ### Intellj ###
 .idea/
 
-### Zipped repo ###
+### Project files to ignore ###
 *.zip
+author.txt
+Relazione_JTrash.pages
+
